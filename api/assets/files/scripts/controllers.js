@@ -1,11 +1,11 @@
+const FIXED_DELTA_TIME = 90; // approximately 0.01667 seconds
 
 var clampMagnitude = function (vec3, maxMagnitude) {
     var currentMagnitude = vec3.length();
 
     if (currentMagnitude > maxMagnitude) {
         vec3.scale(maxMagnitude / currentMagnitude);
-    }
-
+    }    
     return vec3;
 };
 
@@ -38,6 +38,7 @@ class Controllers extends pc.ScriptType {
             entity.reparent(this.cameraParent);
             entity.enabled = true;
         });
+        pc.app.systems.rigidbody.fixedTimeStep =  1 /  FIXED_DELTA_TIME;
     }
 }
 pc.registerScript(Controllers, 'controllers');

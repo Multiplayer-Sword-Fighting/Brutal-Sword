@@ -15,7 +15,7 @@ var Controller = class extends pc.ScriptType {
 
 
         
-            this.entity.enabled = false;
+        this.entity.enabled = false;
     
 
         this.vecA = new pc.Vec3();
@@ -106,10 +106,7 @@ var Controller = class extends pc.ScriptType {
         this.targetTeleportable = false;
     }
 
-    update(dt) {
-      
-            const FIXED_DELTA_TIME = 90; // approximately 0.01667 seconds
-            pc.app.systems.rigidbody.fixedTimeStep =  1 /  FIXED_DELTA_TIME;
+    update(dt) {                  
 
             // pick entities
             this.app.fire('object:pick', this);
@@ -182,40 +179,25 @@ var Controller = class extends pc.ScriptType {
            // this.controllerTemplate.rigidbody.enableSimulation()
             // Store the previous position
             this.previousPosition = this.controllerTemplate.getPosition();
-
-            // Update the current position
             this.currentPosition = this.dir.getPosition();
-
-            // Calculate the velocity 
-            var velocity = this.currentPosition.clone().sub(this.previousPosition).scale(FIXED_DELTA_TIME);
-
-            // Set the velocity
+            var velocity = this.currentPosition.clone().sub(this.previousPosition).scale(30);
             this.controllerTemplate.rigidbody.linearVelocity = velocity //= pc.Vec3.ZERO;
-            //this.controllerTemplate.rigidbody.teleport(this.currentPosition,this.dir.getRotation())
 
             
-            // Store the previous rotation
-            this.previousRotation = this.controllerTemplate.getRotation();
-
-            // Update the current rotation
-            this.currentRotation = this.dir.getRotation();
-
-            // Calculate the relative rotation
-            var relativeRotation = this.currentRotation.clone().mul(this.previousRotation.invert());
-
-            
-            // The angular velocity is the angle divided by the time elapsed
-            var angularVelocity = clampMagnitude(relativeRotation.getEulerAngles().scale(0.7),10);
-            
-            
-            //pc.app.systems.rigidbody.dynamicsWorld.stepSimulation(0.001);
-            
-
-            // Set the angular velocity
+            let previousRotation = this.controllerTemplate.getRotation();
+            let currentRotation = this.dir.getRotation();
+            var relativeRotation = currentRotation.clone().mul(previousRotation.invert());
+            var angularVelocity = relativeRotation.getEulerAngles().scale(0.35);            
+            clampMagnitude(angularVelocity,10);
             this.controllerTemplate.rigidbody.angularVelocity = angularVelocity;
-
             
-           this.controllerTemplate.rigidbody.mass = 5 / (5+ velocity.length()+angularVelocity.length());
+            //let angle = relativeRotation.getAxisAngle(this.controllerTemplate.forward);
+            //angularVelocity = new pc.Quat().setFromEulerAngles(angularVelocity).setFromAxisAngle(this.controllerTemplate.forward,angle).getEulerAngles();
+            //pc.app.systems.rigidbody.dynamicsWorld.stepSimulation(0.001);
+            // Set the angular velocity
+
+            let rad =  5 / (5+ velocity.length()+angularVelocity.length());
+        this.controllerTemplate.rigidbody.mass = rad < .5 ? 5 : rad < .3 ? 3 : 100;
     
 
     }

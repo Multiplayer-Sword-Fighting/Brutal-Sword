@@ -1,0 +1,8 @@
+{
+    "scripts": {
+        "build": "pcsync pullAll && pcwatch"
+    },
+    "dependencies": {
+        
+    }
+}

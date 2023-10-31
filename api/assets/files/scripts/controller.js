@@ -1,22 +1,13 @@
 
-
-var Controller = class extends pc.ScriptType {
-    modelEntity = null;
-    Controller() {
-    Vec3.prototype.add
-        this.controllerTemplate = pc.Entity.prototype;
-        this.dir = pc.Entity.prototype;
-    }
-    postInitialize() {
-        console.log("PostInitialize");
-        this.controllerTemplate.reparent(pc.app.root);
-    }
+var Controller = class extends bs {
+    
+    
     initialize() {
 
 
-        
+
         this.entity.enabled = false;
-    
+
 
         this.vecA = new pc.Vec3();
         this.vecB = new pc.Vec3();
@@ -70,7 +61,7 @@ var Controller = class extends pc.ScriptType {
         inputSource.on('select', this.onSelect.bind(this));
     }
 
-    onRemove() { 
+    onRemove() {
         this.entity.destroy();
     }
 
@@ -106,124 +97,81 @@ var Controller = class extends pc.ScriptType {
         this.targetTeleportable = false;
     }
 
-    update(dt) {                  
+    update(dt) {
 
-            // pick entities
-            this.app.fire('object:pick', this);
+        // pick entities
+        this.app.fire('object:pick', this);
 
-            // is can be gripped, enable model and transform it accordingly
-            if (this.inputSource.grip) {
-                this.modelEntity.enabled = true;
-                this.entity.setPosition(this.inputSource.getPosition());
-                this.entity.setRotation(this.inputSource.getRotation());
+        // is can be gripped, enable model and transform it accordingly
+        if (this.inputSource.grip) {
+            this.modelEntity.enabled = true;
+            this.entity.setPosition(this.inputSource.getPosition());
+            this.entity.setRotation(this.inputSource.getRotation());
 
-                // render ray line
-                this.vecA.copy(this.inputSource.getOrigin());
-                this.vecB.copy(this.inputSource.getDirection());
-                this.vecB.scale(1000).add(this.vecA);
-                if (this.inputSource.selecting) {
-                    this.color.set(0, 1, 0);
-                } else {
-                    this.color.set(1, 1, 1);
-                }
-                this.app.renderLine(this.vecA, this.vecB, this.color);
+            // render ray line
+            this.vecA.copy(this.inputSource.getOrigin());
+            this.vecB.copy(this.inputSource.getDirection());
+            this.vecB.scale(1000).add(this.vecA);
+            if (this.inputSource.selecting) {
+                this.color.set(0, 1, 0);
+            } else {
+                this.color.set(1, 1, 1);
             }
-            
-            // hovered entity pointer distance
-            if (this.hoverEntity) {
-                var dist = this.vecA.copy(this.hoverPoint).sub(this.inputSource.getOrigin()).length();
-                this.pointerDistance += (dist - this.pointerDistance) * 0.3;
+            this.app.renderLine(this.vecA, this.vecB, this.color);
+        }
+
+        // hovered entity pointer distance
+        if (this.hoverEntity) {
+            var dist = this.vecA.copy(this.hoverPoint).sub(this.inputSource.getOrigin()).length();
+            this.pointerDistance += (dist - this.pointerDistance) * 0.3;
+        }
+
+        // pointer position
+        this.vecA.copy(this.inputSource.getDirection()).scale(this.pointerDistance).add(this.inputSource.getOrigin());
+        this.pointer.setPosition(this.vecA);
+
+        // pointer size
+        var pointerSize = this.targetPointerSize * (this.targetTeleportable ? 1 : 1);
+        if (this.pointer.element.width !== pointerSize) {
+            this.pointer.element.width += (pointerSize - this.pointer.element.width) * 0.3;
+
+            if (Math.abs(this.pointer.element.width - pointerSize) <= 1)
+                this.pointer.element.width = pointerSize;
+
+            this.pointer.element.height = this.pointer.element.width;
+        }
+
+        // rotate pointer
+        if (this.targetTeleportable) {
+            // can teleport on the floor
+            this.pointer.setEulerAngles(-90, 0, 0);
+        } else if (this.app.xr.camera) {
+            // towards camera
+            this.pointer.lookAt(this.app.xr.camera.getPosition(), pc.Vec3.DOWN);
+            this.pointer.rotateLocal(0, 180, 0);
+        }
+
+        // gamepad input
+        var gamepad = this.inputSource.gamepad;
+        if (gamepad) {
+            // left controller thumbstick for move
+            if (this.inputSource.handedness === pc.XRHAND_LEFT && (gamepad.axes[3] || gamepad.axes[2])) {
+                this.app.fire('controller:move', gamepad.axes[2], gamepad.axes[3], dt);
+
+                // right controller thumbstick for turn
+            } else if (this.inputSource.handedness === pc.XRHAND_RIGHT && gamepad.axes[2]) {
+                this.app.fire('controller:rotate', -gamepad.axes[2], dt);
             }
+        }
 
-            // pointer position
-            this.vecA.copy(this.inputSource.getDirection()).scale(this.pointerDistance).add(this.inputSource.getOrigin());
-            this.pointer.setPosition(this.vecA);
-
-            // pointer size
-            var pointerSize = this.targetPointerSize * (this.targetTeleportable ? 8 : 1);
-            if (this.pointer.element.width !== pointerSize) {
-                this.pointer.element.width += (pointerSize - this.pointer.element.width) * 0.3;
-
-                if (Math.abs(this.pointer.element.width - pointerSize) <= 1)
-                    this.pointer.element.width = pointerSize;
-
-                this.pointer.element.height = this.pointer.element.width;
-            }
-
-            // rotate pointer
-            if (this.targetTeleportable) {
-                // can teleport on the floor
-                this.pointer.setEulerAngles(-90, 0, 0);
-            } else if (this.app.xr.camera) {
-                // towards camera
-                this.pointer.lookAt(this.app.xr.camera.getPosition(), pc.Vec3.DOWN);
-                this.pointer.rotateLocal(0, 180, 0);
-            }
-
-            // gamepad input
-            var gamepad = this.inputSource.gamepad;
-            if (gamepad) {
-                // left controller thumbstick for move
-                if (this.inputSource.handedness === pc.XRHAND_LEFT && (gamepad.axes[3] || gamepad.axes[2])) {
-                    this.app.fire('controller:move', gamepad.axes[2], gamepad.axes[3], dt);
-
-                    // right controller thumbstick for turn
-                } else if (this.inputSource.handedness === pc.XRHAND_RIGHT && gamepad.axes[2]) {
-                    this.app.fire('controller:rotate', -gamepad.axes[2], dt);
-                }
-            }
-
-          //  this.controllerTemplate.rigidbody.disableSimulation()            
-          //  this.controllerTemplate.setPosition(this.entity.getPosition());
-            //this.controllerTemplate.setRotation(this.entity.getRotation());
-           // this.controllerTemplate.rigidbody.enableSimulation()
-            // Store the previous position
-            this.previousPosition = this.controllerTemplate.getPosition();
-            this.currentPosition = this.dir.getPosition();
-            var velocity = this.currentPosition.clone().sub(this.previousPosition).scale(30);
-            this.controllerTemplate.rigidbody.linearVelocity = velocity //= pc.Vec3.ZERO;
-
-            
-            let previousRotation = this.controllerTemplate.getRotation();
-            let currentRotation = this.dir.getRotation();
-            var relativeRotation = currentRotation.clone().mul(previousRotation.invert());
-            var angularVelocity = relativeRotation.getEulerAngles().scale(0.35);            
-            clampMagnitude(angularVelocity,10);
-            this.controllerTemplate.rigidbody.angularVelocity = angularVelocity;
-            
-            //let angle = relativeRotation.getAxisAngle(this.controllerTemplate.forward);
-            //angularVelocity = new pc.Quat().setFromEulerAngles(angularVelocity).setFromAxisAngle(this.controllerTemplate.forward,angle).getEulerAngles();
-            //pc.app.systems.rigidbody.dynamicsWorld.stepSimulation(0.001);
-            // Set the angular velocity
-
-            let rad =  5 / (5+ velocity.length()+angularVelocity.length());
-        this.controllerTemplate.rigidbody.mass = rad < .5 ? 5 : rad < .3 ? 3 : 100;
-    
 
     }
-    
     swap (old) {
-        for (let prop in old) {
-                this[prop] = old[prop];
-        }
+        this.DoSwap(old);  
     };
-    
-    //controllerTemplate 
 
 }
-function GetFromAToBRotation() {
- 
-}
 
 
 
-pc.registerScript(Controller, 'controller'); 
-Controller.attributes.add('controllerTemplate', {
-    type: 'entity',
-    title: 'Controller Template'
-}); 
-
-Controller.attributes.add('dir', {
-    type: 'entity',
-    title: 'dir'
-});
+pc.registerScript(Controller, 'controller');

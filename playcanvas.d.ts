@@ -10820,7 +10820,7 @@ declare class GraphNode extends EventHandler {
      * // Return all assets that tagged by (`carnivore` AND `mammal`) OR (`carnivore` AND `reptile`)
      * const meatEatingMammalsAndReptiles = node.findByTag(["carnivore", "mammal"], ["carnivore", "reptile"]);
      */
-    findByTag(...args: any[]): GraphNode[];
+    findByTag(...args: any[]): Entity[];
     /**
      * Get the first node found in the graph with the name. The search is depth first.
      *
@@ -10828,7 +10828,7 @@ declare class GraphNode extends EventHandler {
      * @returns {GraphNode|null} The first node to be found matching the supplied name. Returns
      * null if no node is found.
      */
-    findByName(name: string): GraphNode | null;
+    findByName(name: string): Entity | null;
     /**
      * Get the first node found in the graph by its full path in the graph. The full path has this
      * form 'parent/child/sub-child'. The search is depth first.

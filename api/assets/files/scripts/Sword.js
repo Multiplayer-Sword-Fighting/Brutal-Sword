@@ -10,22 +10,30 @@ var Sword = class extends bs {
     swap(old) {
         this.DoSwap(old);
     };
-    Sword() {
-    }
-    postInitialize() {
-        //this.controllerTemplate.reparent(pc.app.root);
-        // get mini-stats
-        //const miniStats = new pcx.MiniStats(pc.app);
-        //if (this.debugPanel) this.debugPanel.element.text = miniStats.stats.drawCalls.total;
+    initialize() {
+
+        this.spark = this.entity.findByName("spark")?.particlesystem;
+        this.slash = this.entity.findByName("slash")?.sound;
+        //this.controllerTemplate.rigidbody.on('collisionstart', (/** @type {pc.ContactResult} */ result) => {});
+        //this.controllerTemplate.rigidbody.on('collisionend', (/** @type {pc.ContactResult} */ result) => {});
+        
+        if(false && this.entity.getComponentInParent(Player.scriptName))
+        this.controllerTemplate.rigidbody.on('collisionstart', (/** @type {pc.ContactResult} */ result) => {
+            //console.log(result);
+            this.spark.entity.setPosition(result.contacts[0].point);
+            
+            this.spark.reset(); 
+            this.spark.play();
+            //this.slash.volume=.4;
+            //if (!this.slash.isPlaying())this.slash.play(Utils.randomKey(this.slash.slots));
+        });
+         
 
     }
+
     update() {
         if (!pc.app.xr.session) return;
-        //  this.controllerTemplate.rigidbody.disableSimulation()            
-        //  this.controllerTemplate.setPosition(this.entity.getPosition());
-        //this.controllerTemplate.setRotation(this.entity.getRotation());
-        // this.controllerTemplate.rigidbody.enableSimulation()
-        // Store the previous position
+
         this.previousPosition = this.controllerTemplate.getPosition();
         this.currentPosition = this.dir.getPosition();
         var velocity = this.currentPosition.clone().sub(this.previousPosition).scale(30);
@@ -36,31 +44,19 @@ var Sword = class extends bs {
         let currentRotation = this.dir.getRotation();
         var relativeRotation = currentRotation.clone().mul(previousRotation.invert());
         var angularVelocity = relativeRotation.getEulerAngles().scale(0.35);
-        clampMagnitude(angularVelocity, 10); 
+        Utils.clampMagnitude(angularVelocity, 10); 
         this.controllerTemplate.rigidbody.angularVelocity = angularVelocity;
 
-        //let angle = relativeRotation.getAxisAngle(this.controllerTemplate.forward);
-        //angularVelocity = new pc.Quat().setFromEulerAngles(angularVelocity).setFromAxisAngle(this.controllerTemplate.forward,angle).getEulerAngles();
-        //pc.app.systems.rigidbody.dynamicsWorld.stepSimulation(0.001);
-        // Set the angular velocity
-
-        //let rad = 5 / (5 + velocity.length() + angularVelocity.length());
-        //this.controllerTemplate.rigidbody.mass = 
-        //let 
-        
-        
          
         
         let mass = (1 / (1+ velocity.length()+angularVelocity.length()));
-        //mass = mass < .5 ? 5 : mass < .3 ? 3 : 100;;
-
+        mass = mass < .5 ? 5 : mass < .3 ? 3 : 100;
         //let fv = -this.controllerTemplate.up.dot(this.entity.parent.forward);
         //mass = pc.math.lerp(mass,1.1 - mass, fv)*1;
         //if(fv>.5)
         //mass = .1;
 
-        if (this.debugPanel) 
-            this.debugPanel.element.text = Math.round(mass*100).toString();
+        //if (this.debugPanel) this.debugPanel.element.text = Math.round(mass*100).toString();
 
         if (this.controllerTemplate.rigidbody._mass != mass) {
             this.controllerTemplate.rigidbody._mass = mass;

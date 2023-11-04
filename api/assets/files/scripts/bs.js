@@ -1,6 +1,12 @@
 var /** @type {Life[]} */ lifeList = [];
 class  bs extends pc.ScriptType {
-    
+    constructor(params) {
+        super(params);
+        this.Awake();
+    }
+    Awake(){
+
+    }
     DoSwap (old) {
         console.log("Swapped "+this.__scriptType.name)
         for (let prop in old) {
@@ -10,6 +16,7 @@ class  bs extends pc.ScriptType {
     InitArguments(){
         
     }
+    
     static Register()
     {
         
@@ -19,4 +26,3 @@ class  bs extends pc.ScriptType {
         //console.log(this);
     }
 };
-//pc.registerScript(bs2, 'bs2');

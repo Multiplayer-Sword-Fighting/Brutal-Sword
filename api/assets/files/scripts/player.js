@@ -1,17 +1,24 @@
 
-var FIXED_DELTA_TIME = 120; // approximately 0.01667 seconds
-if (globalThis.importScripts) bs = pc.ScriptType;
+if (globalThis.importScripts) bs = pc.ScriptType; 
 
 
 var Player = class extends bs {
-
-    Controllers() {
-
+    Awake() {
+        this.app.xr.input.on('add', (/** @type {pc.XrInputSource} */ inputSource) => {
+            var entity = (inputSource.handedness == '' ? inputSource.id == 2 : inputSource.handedness == pc.XRHAND_LEFT) ? this.controllerTemplate1 : this.controllerTemplate2;
+            entity.script.controller.setInputSource(inputSource);
+            //entity.reparent(this.cameraParent); 
+            entity.enabled = true;
+        });
+    }
+    initialize() {        
+        pc.app.systems.rigidbody.fixedTimeStep = 1 / 120;
+    }
+    
+    InitArguments() {
         this.controllerTemplate1 = pc.Entity.prototype;
         this.controllerTemplate2 = pc.Entity.prototype;
-        this.collider = pc.Entity.prototype;
         this.head = pc.Entity.prototype;
-
     }
     update() {
         if (!pc.app.xr.session) return;
@@ -35,20 +42,10 @@ var Player = class extends bs {
         if (this.head) {
             this.head.setRotation(pc.app.xr.camera.getRotation());
         }
-        
+
 
     }
-    initialize() {
-        this.app.xr.input.on('add', (/** @type {pc.XrInputSource} */ inputSource) => {
-            
-            var entity = (inputSource.handedness == '' ? inputSource.id == 2 : inputSource.handedness == pc.XRHAND_LEFT) ? this.controllerTemplate1 : this.controllerTemplate2;
-            entity.script.controller.setInputSource(inputSource);
-            //entity.reparent(this.cameraParent); 
-            entity.enabled = true;
-        });
-        pc.app.systems.rigidbody.fixedTimeStep = 1 / FIXED_DELTA_TIME;
-
-    }
+    
 
     swap(old) {
         this.DoSwap(old);
@@ -57,7 +54,6 @@ var Player = class extends bs {
 }
 pc.registerScript(Player, 'player');
 
-Player.attributes.add('collider', { type: 'entity' });
 Player.attributes.add('controllerTemplate1', { type: 'entity' });
 Player.attributes.add('controllerTemplate2', { type: 'entity', });
 Player.attributes.add('head', { type: 'entity' });

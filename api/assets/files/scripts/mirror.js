@@ -1,6 +1,6 @@
 var Mirror = class extends bs {
     initialize() {
-        this.frameData = new Array(500).fill({ position: null, rotation: null,index: null });
+        this.frameData = new Array(100).fill({ position: null, rotation: null,index: null });
         this.frameIndex = 0;
     }
     InitArguments() {
@@ -8,6 +8,7 @@ var Mirror = class extends bs {
         this.to = [this.entity,this.entity,this.entity];
     }
     update(dt) {
+        if (!pc.app.xr.session) return;
         for (let i = 0; i < this.from.length; i++) {
             let fromEntity = this.from[i];
             // Save current position and rotation

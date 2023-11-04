@@ -1,21 +1,24 @@
 
 class Vr extends pc.ScriptType {
-
-
+    
     initialize() {
         this.buttonVr.element.on('click', () => this.sessionStart());
         this.app.keyboard.on('keydown', evt => {
             if (evt.key === pc.KEY_ESCAPE && this.app.xr.active) this.app.xr.end();
         });
         this.checkButton(false);
-        this.setEvents('on');
-        this.on('destroy', () => this.setEvents('off'));
+        this.setEvents();
+        
+        //this.timeout = setTimeout(() => {this.sessionStart();}, 1000);
+        
     }
 
-    setEvents(offOn) {
-        this.app.xr[offOn]('available:' + pc.XRTYPE_VR, this.onAvailable, this);
-        this.app.xr[offOn]('start', this.onStart, this);
-        this.app.xr[offOn]('end', this.onEnd, this);
+    
+    setEvents() {
+        this.app.xr.on('available:' + pc.XRTYPE_VR, this.onAvailable, this);
+        this.app.xr.on('start', this.onStart, this);
+        this.app.xr.on('end', this.onEnd, this);
+        this.app.xr.on('error', ex=>console.error(ex));
     }
 
     checkButton(enteringVr) {
@@ -51,10 +54,12 @@ class Vr extends pc.ScriptType {
     onStart() { this.checkButton(true); }
     onEnd() { this.checkButton(false); }
 }
+
+
+
+pc.registerScript(Vr, 'vr');
+
 Vr.attributes.add('buttonVr', { type: 'entity', title: 'VR Button' });
 Vr.attributes.add('elementUnsupported', { type: 'entity', title: 'Unsupported Message' });
 Vr.attributes.add('elementHttpsRequired', { type: 'entity', title: 'HTTPS Required Message' });
 Vr.attributes.add('cameraEntity', { type: 'entity', title: 'Camera' });
-
-
-pc.registerScript(Vr, 'vr');

@@ -1,12 +1,12 @@
 
 var Controller = class extends bs {
-    
-    
+
+
     initialize() {
 
 
 
-        this.entity.enabled = false;
+        //this.entity.enabled = false;
 
 
         this.vecA = new pc.Vec3();
@@ -51,27 +51,43 @@ var Controller = class extends bs {
     //inputSourceIndex=0;
     //get inputSource(){ return pc.app.xr.input.inputSources[this.inputSourceIndex]; }
     //set inputSource(value){  this.inputSourceIndex = pc.app.xr.input.inputSources.indexOf(value)}
-    setInputSource(inputSource) {
-        this.inputSource = inputSource;
-        inputSource.once('remove', this.onRemove.bind(this));
-
-        this.on('hover', this.onHover.bind(this));
-        this.on('blur', this.onBlur.bind(this));
-
-        inputSource.on('select', this.onSelect.bind(this));
+setInputSource(/** @type {pc.XrInputSource} */inputSource) {
+    this.inputSource = inputSource;
+    inputSource.once('remove', this.onRemove.bind(this));
+    
+    this.on('hover', this.onHover.bind(this));
+    this.on('blur', this.onBlur.bind(this));
+    
+    if(inputSource.gamepad && inputSource.gamepad.buttons) {
+        let previousButtonState = new Array(inputSource.gamepad.buttons.length).fill(false);
+        pc.app.on('update', function(dt) {
+            inputSource.gamepad.buttons.forEach(function(button, index) {
+                if (button.pressed && !previousButtonState[index]) {
+                   // pc.app.fire('gamepad:button:' + index + ':pressed', { button: index });
+                    toggleWorld(true)                    
+                } else if (!button.pressed && previousButtonState[index]) {
+                   // pc.app.fire('gamepad:button:' + index + ':released', { button: index });
+                    toggleWorld(false)
+                }
+                previousButtonState[index] = button.pressed;
+            }, this);
+        }, this);
     }
+    inputSource.on('select', this.onSelect.bind(this)); 
+}
 
     onRemove() {
         this.entity.destroy();
     }
 
     onSelect() {
+
         this.app.fire('object:pick', this);
 
         if (this.hoverEntity) {
             // teleport
             if (this.targetTeleportable) {
-                this.app.fire('controller:teleport', this.hoverPoint);
+                //this.app.fire('controller:teleport', this.hoverPoint);
 
                 // paint interactible model
             } else if (this.hoverEntity.tags.has('interactive')) {
@@ -166,12 +182,19 @@ var Controller = class extends bs {
 
 
     }
-    swap (old) {
-        this.DoSwap(old);  
+    swap(old) {
+        this.DoSwap(old);
     };
 
 }
-
+function toggleWorld(value) {
+    let mainCamera = pc.app.systems.camera.cameras[0];
+    if (value)
+        mainCamera.layers= mainCamera.layers.filter(a => a != pc.LAYERID_WORLD);
+    else
+        mainCamera.layers = [...mainCamera.layers,pc.LAYERID_WORLD];
+    ;
+}
 
 
 pc.registerScript(Controller, 'controller');

@@ -9,7 +9,11 @@
             "request": "launch",
             "name": "Launch Chrome against localhost",
             "url": "https://launch.playcanvas.com/1884029?debug=true",
-            "webRoot": "${workspaceFolder}"            
+            "webRoot": "${workspaceFolder}"            ,
+            "runtimeArgs": [
+                //"--disable-gpu-vsync",
+                //"--disable-frame-rate-limit"
+            ],
         }
     ]
 }

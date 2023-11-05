@@ -6,6 +6,11 @@ var TriggerHelper = class extends bs {
     }
     onTriggerEnter(e){
         console.log("asd");
+        
+        
     }
 }
 pc.registerScript(TriggerHelper, 'TriggerHelper');
+
+
+

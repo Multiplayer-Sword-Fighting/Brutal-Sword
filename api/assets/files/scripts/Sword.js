@@ -50,7 +50,7 @@ var Sword = class extends bs {
          
         
         let mass = (1 / (1+ velocity.length()+angularVelocity.length()));
-        mass = mass < .5 ? 5 : mass < .3 ? 3 : 100;
+        //mass = mass < .5 ? 5 : mass < .3 ? 3 : 100;
         //let fv = -this.controllerTemplate.up.dot(this.entity.parent.forward);
         //mass = pc.math.lerp(mass,1.1 - mass, fv)*1;
         //if(fv>.5)
@@ -67,7 +67,7 @@ var Sword = class extends bs {
     
     _ammoVec1 = new pc.Vec3();
 
-};
+}; 
 pc.registerScript(Sword, 'Sword');
 
 Sword.attributes.add('debugPanel', {

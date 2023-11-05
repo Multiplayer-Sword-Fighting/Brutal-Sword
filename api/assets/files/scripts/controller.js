@@ -4,11 +4,6 @@ var Controller = class extends bs {
 
     initialize() {
 
-
-
-        //this.entity.enabled = false;
-
-
         this.vecA = new pc.Vec3();
         this.vecB = new pc.Vec3();
         this.matA = new pc.Mat4();
@@ -51,53 +46,38 @@ var Controller = class extends bs {
     //inputSourceIndex=0;
     //get inputSource(){ return pc.app.xr.input.inputSources[this.inputSourceIndex]; }
     //set inputSource(value){  this.inputSourceIndex = pc.app.xr.input.inputSources.indexOf(value)}
-setInputSource(/** @type {pc.XrInputSource} */inputSource) {
-    this.inputSource = inputSource;
-    inputSource.once('remove', this.onRemove.bind(this));
-    
-    this.on('hover', this.onHover.bind(this));
-    this.on('blur', this.onBlur.bind(this));
-    
-    if(inputSource.gamepad && inputSource.gamepad.buttons) {
-        let previousButtonState = new Array(inputSource.gamepad.buttons.length).fill(false);
-        pc.app.on('update', function(dt) {
-            inputSource.gamepad.buttons.forEach(function(button, index) {
-                if (button.pressed && !previousButtonState[index]) {
-                   // pc.app.fire('gamepad:button:' + index + ':pressed', { button: index });
-                    toggleWorld(true)                    
-                } else if (!button.pressed && previousButtonState[index]) {
-                   // pc.app.fire('gamepad:button:' + index + ':released', { button: index });
-                    toggleWorld(false)
-                }
-                previousButtonState[index] = button.pressed;
+    setInputSource(/** @type {pc.XrInputSource} */inputSource) {
+        this.inputSource = inputSource;
+        inputSource.once('remove', this.onRemove.bind(this));
+
+        this.on('hover', this.onHover.bind(this));
+        this.on('blur', this.onBlur.bind(this));
+
+        if (inputSource.gamepad && inputSource.gamepad.buttons) {
+            let previousButtonState = new Array(inputSource.gamepad.buttons.length).fill(false);
+            pc.app.on('update', function (dt) {
+                inputSource.gamepad.buttons.forEach(function (button, index) {
+                    if (button.pressed && !previousButtonState[index]) {
+                        // pc.app.fire('gamepad:button:' + index + ':pressed', { button: index });
+                        toggleWorld(true)
+                    } else if (!button.pressed && previousButtonState[index]) {
+                        // pc.app.fire('gamepad:button:' + index + ':released', { button: index });
+                        toggleWorld(false)
+                    }
+                    previousButtonState[index] = button.pressed;
+                }, this);
             }, this);
-        }, this);
+        }
+        inputSource.on('select', this.onSelect.bind(this));
     }
-    inputSource.on('select', this.onSelect.bind(this)); 
-}
 
     onRemove() {
         this.entity.destroy();
     }
 
     onSelect() {
-
-        this.app.fire('object:pick', this);
-
-        if (this.hoverEntity) {
-            // teleport
-            if (this.targetTeleportable) {
-                //this.app.fire('controller:teleport', this.hoverPoint);
-
-                // paint interactible model
-            } else if (this.hoverEntity.tags.has('interactive')) {
-                var mesh = this.hoverEntity.render.meshInstances[0];
-                if (!mesh.pickedColor) mesh.pickedColor = new pc.Color();
-
-                mesh.pickedColor.set(Math.random(), Math.random(), Math.random());
-                mesh.setParameter('material_diffuse', mesh.pickedColor.data3);
-            }
-        }
+        if (this.targetTeleportable) 
+            st.Camera.onTeleport(this.hoverPoint);
     }
 
     onHover(entity, point) {
@@ -114,10 +94,7 @@ setInputSource(/** @type {pc.XrInputSource} */inputSource) {
     }
 
     update(dt) {
-
-        // pick entities
-        this.app.fire('object:pick', this);
-
+        
         // is can be gripped, enable model and transform it accordingly
         if (this.inputSource.grip) {
             this.modelEntity.enabled = true;
@@ -172,11 +149,9 @@ setInputSource(/** @type {pc.XrInputSource} */inputSource) {
         if (gamepad) {
             // left controller thumbstick for move
             if (this.inputSource.handedness === pc.XRHAND_LEFT && (gamepad.axes[3] || gamepad.axes[2])) {
-                this.app.fire('controller:move', gamepad.axes[2], gamepad.axes[3], dt);
-
-                // right controller thumbstick for turn
+                st.Camera.onMove(gamepad.axes[2], gamepad.axes[3], dt);
             } else if (this.inputSource.handedness === pc.XRHAND_RIGHT && gamepad.axes[2]) {
-                this.app.fire('controller:rotate', -gamepad.axes[2], dt);
+                st.Camera.onRotate(gamepad.axes[2], dt);
             }
         }
 
@@ -190,9 +165,9 @@ setInputSource(/** @type {pc.XrInputSource} */inputSource) {
 function toggleWorld(value) {
     let mainCamera = pc.app.systems.camera.cameras[0];
     if (value)
-        mainCamera.layers= mainCamera.layers.filter(a => a != pc.LAYERID_WORLD);
+        mainCamera.layers = mainCamera.layers.filter(a => a != pc.LAYERID_WORLD);
     else
-        mainCamera.layers = [...mainCamera.layers,pc.LAYERID_WORLD];
+        mainCamera.layers = [...mainCamera.layers, pc.LAYERID_WORLD];
     ;
 }
 

@@ -1,8 +1,14 @@
 
 class Vr extends pc.ScriptType {
-    
+    InitArgs(){
+        this.buttonVr = pc.Entity.prototype;
+    }
     initialize() {
+        
+        this.buttonVr.element.text = "Loading...";
+        this.buttonVr.element.fontSize = 30;
         this.buttonVr.element.on('click', () => this.sessionStart());
+        st.buttonAr.entity.element.on('click', () => this.sessionStart(pc.XRTYPE_AR));
         this.app.keyboard.on('keydown', evt => {
             if (evt.key === pc.KEY_ESCAPE && this.app.xr.active) this.app.xr.end();
         });
@@ -15,7 +21,7 @@ class Vr extends pc.ScriptType {
 
     
     setEvents() {
-        this.app.xr.on('available:' + pc.XRTYPE_VR, this.onAvailable, this);
+        this.app.xr.on('available:' + pc.XRTYPE_AR, this.onAvailable, this);
         this.app.xr.on('start', this.onStart, this);
         this.app.xr.on('end', this.onEnd, this);
         this.app.xr.on('error', ex=>console.error(ex));
@@ -26,7 +32,7 @@ class Vr extends pc.ScriptType {
             this.elementHttpsRequired.enabled = this.elementUnsupported.enabled = false;
             this.buttonVr.enabled = !enteringVr;
             if (!enteringVr) {
-                let available = this.app.xr && !this.app.xr.active && this.app.xr.isAvailable(pc.XRTYPE_VR);
+                let available = this.app.xr && !this.app.xr.active && this.app.xr.isAvailable(pc.XRTYPE_AR); 
                 this.buttonVr.element.opacity = available ? 0.2 : 0.1;
                 this.buttonVr.children[0].element.opacity = available ? 1.0 : 0.2;
             }
@@ -35,18 +41,19 @@ class Vr extends pc.ScriptType {
             this.elementUnsupported.enabled = window.location.protocol == "https:";
             this.elementHttpsRequired.enabled = !this.elementUnsupported.enabled;
         }
-    }
+    } 
 
-    sessionStart() {
-        if (!this.app.xr.supported || this.app.xr.active || !this.app.xr.isAvailable(pc.XRTYPE_VR)) return;
+    sessionStart(type = pc.XRTYPE_VR) {
+        st.buttonAr.entity.enabled = false;
+        if (!this.app.xr.supported || this.app.xr.active || !this.app.xr.isAvailable(type)) return;
         if (window.DeviceOrientationEvent && window.DeviceOrientationEvent.requestPermission) {
             DeviceOrientationEvent.requestPermission().then(response => {
                 if (response == 'granted') {
-                    window.addEventListener('deviceorientation', () => this.cameraEntity.camera.startXr(pc.XRTYPE_VR, pc.XRSPACE_LOCAL));
+                    window.addEventListener('deviceorientation', () => this.cameraEntity.camera.startXr(type, pc.XRSPACE_LOCAL));
                 }
             }).catch(console.error);
         } else {
-            this.cameraEntity.camera.startXr(pc.XRTYPE_VR, pc.XRSPACE_LOCAL);
+            this.cameraEntity.camera.startXr(type, pc.XRSPACE_LOCAL);
         }
     }
 

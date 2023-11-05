@@ -1,8 +1,23 @@
 var /** @type {Life[]} */ lifeList = [];
-class  bs extends pc.ScriptType {
+class st {
+    /** @type {bs} */ 
+    static buttonAr;
+    
+    /** @type {Player} */ 
+    static Player;
+    
+    /** @type {bs} */ 
+    static Mirror;
+    /** @type {CameraController} */
+    static Camera;
+    
+}
+
+class bs extends pc.ScriptType {
     constructor(params) {
         super(params);
         this.Awake();
+        st[params.entity.name]=this;
     }
     Awake(){
 
@@ -26,3 +41,5 @@ class  bs extends pc.ScriptType {
         //console.log(this);
     }
 };
+
+pc.registerScript(bs, 'bs');

@@ -9,16 +9,6 @@ var CameraController = class extends bs {
 
         this.lastRotate = 0;
         this.lastRotateValue = 0;
-
-        this.app.on('controller:teleport', this.onTeleport, this);
-        this.app.on('controller:move', this.onMove, this);
-        this.app.on('controller:rotate', this.onRotate, this);
-
-        this.on('destroy', () => {
-            this.app.off('controller:teleport', this.onTeleport, this);
-            this.app.off('controller:move', this.onMove, this);
-            this.app.off('controller:rotate', this.onRotate, this);
-        });
     }
 
     onTeleport(position) {
@@ -53,6 +43,7 @@ var CameraController = class extends bs {
     }
 
     onRotate(yaw, dt) {
+        if(Math.abs(yaw)< this.rotateThreshold) yaw=0;
         var now = Date.now();
 
         if ((now - this.lastRotate) < 200)

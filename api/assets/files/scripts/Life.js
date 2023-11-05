@@ -42,11 +42,11 @@ var Life = class extends bs {
         let enemy = sword.getComponentInParent(Life.scriptName)
         let me = this.entity.script.Life;
         if (enemy == me || !enemy) return;
-        /*
+        
         this.blood.entity.setPosition(this.entity.getPosition());
         this.blood.reset();
         this.blood.play();
-        */
+        
         let damage = sword.rigidbody.linearVelocity.length() + sword.rigidbody.angularVelocity.length();
         this.life -= damage; // Subtract life
         this.tran = enemy.entity.forward.clone()
@@ -56,7 +56,7 @@ var Life = class extends bs {
         if(this.entity.script.player) 
         {
             //this.tran.scale(damage/300);
-            //this.entity.parent.translate(this.tran.scale(damage/50));
+            enemy.entity.parent.translate(this.tran.scale(-damage/50));
             this.tran.set(0,0,0);
         }
         else

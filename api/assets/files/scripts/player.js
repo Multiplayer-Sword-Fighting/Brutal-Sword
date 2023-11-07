@@ -16,9 +16,9 @@ var Player = class extends bs {
             //entity.reparent(this.cameraParent); 
             controller.enabled = true;
         });
-        this.controllers = [this.ControllerL, this.ControllerR];
     }
     initialize() {        
+        this.controllers = [this.ControllerL, this.ControllerR];
         pc.app.systems.rigidbody.fixedTimeStep = 1 / 220;
     }
     

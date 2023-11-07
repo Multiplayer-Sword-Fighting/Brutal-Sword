@@ -1,5 +1,7 @@
 
 class Vr extends pc.ScriptType {
+    /** @type {bs} */
+    buttonAr = null;
     InitArgs(){
         this.buttonVr = pc.Entity.prototype;
     }
@@ -8,7 +10,7 @@ class Vr extends pc.ScriptType {
         this.buttonVr.element.text = "Loading...";
         this.buttonVr.element.fontSize = 30;
         this.buttonVr.element.on('click', () => this.sessionStart());
-        st.buttonAr.entity.element.on('click', () => this.sessionStart(pc.XRTYPE_AR));
+        this.buttonAr.entity.element.on('click', () => this.sessionStart(pc.XRTYPE_AR));
         this.app.keyboard.on('keydown', evt => {
             if (evt.key === pc.KEY_ESCAPE && this.app.xr.active) this.app.xr.end();
         });
@@ -31,6 +33,7 @@ class Vr extends pc.ScriptType {
         if (this.app.xr.supported) {
             this.elementHttpsRequired.enabled = this.elementUnsupported.enabled = false;
             this.buttonVr.enabled = !enteringVr;
+            gameStartTime = Date.now();
             if (!enteringVr) {
                 let available = this.app.xr && !this.app.xr.active && this.app.xr.isAvailable(pc.XRTYPE_AR); 
                 this.buttonVr.element.opacity = available ? 0.2 : 0.1;
@@ -44,7 +47,7 @@ class Vr extends pc.ScriptType {
     } 
 
     sessionStart(type = pc.XRTYPE_VR) {
-        st.buttonAr.entity.enabled = false;
+        this.buttonAr.entity.enabled = false;
         if (!this.app.xr.supported || this.app.xr.active || !this.app.xr.isAvailable(type)) return;
         if (window.DeviceOrientationEvent && window.DeviceOrientationEvent.requestPermission) {
             DeviceOrientationEvent.requestPermission().then(response => {

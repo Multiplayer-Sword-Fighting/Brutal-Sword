@@ -54,6 +54,7 @@ var Sword = class extends bs {
         var relativeRotation = currentRotation.clone().mul(previousRotation.invert());
         var angularVelocity = relativeRotation.getEulerAngles().scale(0.35);
         angularVelocity = Utils.clampMagnitude(angularVelocity, 30);
+        
         this.controllerTemplate.rigidbody.angularVelocity = angularVelocity;
 
 

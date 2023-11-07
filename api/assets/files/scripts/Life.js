@@ -1,7 +1,9 @@
+
 if (globalThis.importScripts) bs = pc.ScriptType;
 
 
 var Life = class extends bs {
+    
     /** @type {Sword} */
     ControllerL = null;
     /** @type {Sword} */
@@ -30,6 +32,10 @@ var Life = class extends bs {
         this.collider = pc.Entity.prototype;
         this.lifebar = pc.Entity.prototype;
         this.score = pc.Entity.prototype;
+          /** @type {Entity[]} */
+        this.sync = [];
+        /** @type {Entity[]} */
+        this.syncMp = [];
 
     }
 
@@ -44,13 +50,16 @@ var Life = class extends bs {
         this.DoSwap(old);
         this.initialize();
     }
-    update() {
-        this.entity.parent.translate(this.tran);
+    update() 
+    {
+        //st.CameraController.entity.translate(this.tran);
         this.tran.scale(0.9);
     }
     tran = new pc.Vec3();
     onTriggerEnter(/** @type {pc.Entity} */ sword) {
         if (!pc.app.xr.session) return;
+        if(gameStartTime-Date.now()<1000)
+            return;
         let enemy = sword.getComponentInParent(Life.scriptName)
         let me = this.entity.script.Life;
         if (enemy == me || !enemy) return;
@@ -65,14 +74,12 @@ var Life = class extends bs {
 
         this.tran.y = 0;
 
+        this.tran.scale(damage / 300*this.entity.script.player?-1:1);
         if (this.entity.script.player) {
             //this.tran.scale(damage/300);
             this.entity.script.player.controllers.forEach(function (controller) { controller.inputSource.gamepad?.vibrationActuator?.playEffect("dual-rumble", { duration: 50, strongMagnitude: 1, weakMagnitude: 1 }); });
-            enemy.entity.parent.translate(this.tran.scale(-damage / 50));
-            this.tran.set(0, 0, 0);
         }
         else {
-            this.tran.scale(damage / 300);
             sword.getComponentInParent(Controller.scriptName)?.inputSource?.gamepad?.vibrationActuator?.playEffect("dual-rumble", { duration: 50, strongMagnitude: 1, weakMagnitude: 1 });
         }
 
@@ -101,3 +108,12 @@ pc.registerScript(Life, 'Life');
 Life.attributes.add('collider', { type: 'entity' });
 Life.attributes.add('lifebar', { type: 'entity' });
 Life.attributes.add('score', { type: 'entity' });
+
+Life.attributes.add('sync', {
+    type: 'entity',
+    array: true,
+});
+Life.attributes.add('syncMp', {
+    type: 'entity',
+    array: true,
+});

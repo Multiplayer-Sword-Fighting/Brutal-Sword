@@ -1,23 +1,22 @@
 
 var Mirror = class extends bs{
-    /** @type {Life} */
-    Player = null;    
+    
     initialize() {
         this.frameData = new Array(100).fill({ position: null, rotation: null,index: null });
         this.frameIndex = 0;
     }
-    InitArguments() {
-        this.from = [this.entity,this.entity,this.entity];
-        this.to = [this.entity,this.entity,this.entity];
-    }
+    
     update(dt) {
         if (!pc.app.xr.session) return;
-        for (let i = 0; i < this.from.length; i++) {
-            let fromEntity = this.from[i];
+
+        let to = this.entity.script.Life.sync;
+        let from = st.Player.entity.script.Life.sync;
+        for (let i = 0; i < from.length; i++) {
+            let fromEntity = from[i];
             // Save current position and rotation
             let fromPos = fromEntity.getLocalPosition().clone();
             let fromRot = fromEntity.getLocalRotation().clone();
-            this.frameData[this.frameIndex] = { position: fromPos, rotation: fromRot, toEntity: this.to[i] };
+            this.frameData[this.frameIndex] = { position: fromPos, rotation: fromRot, toEntity: to[i] };
             // Load 100 frames old position, rotation and toEntity
             let oldFrameIndex = (this.frameIndex + 1) % this.frameData.length;
             let oldFrameData = this.frameData[oldFrameIndex];

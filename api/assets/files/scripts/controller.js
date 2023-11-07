@@ -1,6 +1,6 @@
 
 var Controller = class extends bs {
-
+    
 
     initialize() {
 
@@ -82,7 +82,7 @@ var Controller = class extends bs {
 
     onSelect() {
         if (this.targetTeleportable) 
-            st.Camera.onTeleport(this.hoverPoint);
+            st.CameraController.onTeleport(this.hoverPoint);
     }
 
     onHover(entity, point) {
@@ -155,9 +155,9 @@ var Controller = class extends bs {
         if (gamepad) {
             // left controller thumbstick for move
             if (this.inputSource.handedness === pc.XRHAND_LEFT && (gamepad.axes[3] || gamepad.axes[2])) {
-                st.Camera.onMove(gamepad.axes[2], gamepad.axes[3], dt);
+                st.CameraController.onMove(gamepad.axes[2], gamepad.axes[3], dt);
             } else if (this.inputSource.handedness === pc.XRHAND_RIGHT && gamepad.axes[2]) {
-                st.Camera.onRotate(gamepad.axes[2], dt);
+                st.CameraController.onRotate(gamepad.axes[2], dt);
             }
         }
 

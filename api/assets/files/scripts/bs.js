@@ -1,13 +1,13 @@
 
 var st = {
-    /** @type {bs} */
-    buttonAr: null,
     /** @type {Player} */
-    Player: null,
+    Player:null,
     /** @type {Mirror} */
-    Mirror: null,
+    Mirror:null,
     /** @type {CameraController} */
-    Camera: null,
+    CameraController:null,
+    /** @type {Multiplayer} */
+    Multiplayer:null,
     
 }
 var Types = {
@@ -21,9 +21,7 @@ class bs extends pc.ScriptType {
 
         super(params);
         this.Awake();
-        //if (!st[params.entity.name] || this.__scriptType.name === st[params.entity.name])
-            st[params.entity.name] = this;
-
+        st[this.__scriptType.name] = this;
 
         var parent = this.entity.parent;
         while (parent) {

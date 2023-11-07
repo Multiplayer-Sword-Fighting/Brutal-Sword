@@ -10683,7 +10683,7 @@ declare class GraphNode extends EventHandler {
      *
      * @type {GraphNode|null}
      */
-    get parent(): GraphNode;
+    get parent(): Entity;
     /**
      * A read-only property to get the path of the graph node relative to the root of the hierarchy.
      *
@@ -10701,7 +10701,7 @@ declare class GraphNode extends EventHandler {
      *
      * @type {GraphNode[]}
      */
-    get children(): GraphNode[];
+    get children(): Entity[];
     /**
      * A read-only property to get the depth of this child within the graph. Note that for
      * performance reasons this is only recalculated when a node is added to a new parent, i.e. It

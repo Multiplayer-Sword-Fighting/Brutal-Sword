@@ -1,45 +1,52 @@
-var /** @type {Life[]} */ lifeList = [];
-class st {
-    /** @type {bs} */ 
-    static buttonAr;
-    
-    /** @type {Player} */ 
-    static Player;
-    
-    /** @type {bs} */ 
-    static Mirror;
+
+var st = {
+    /** @type {bs} */
+    buttonAr: null,
+    /** @type {Player} */
+    Player: null,
+    /** @type {Mirror} */
+    Mirror: null,
     /** @type {CameraController} */
-    static Camera;
+    Camera: null,
     
 }
+var Types = {
+    /** @type {Life[]} */
+    Life : []
+}
+
 
 class bs extends pc.ScriptType {
     constructor(params) {
+
         super(params);
         this.Awake();
-        st[params.entity.name]=this;
+        //if (!st[params.entity.name] || this.__scriptType.name === st[params.entity.name])
+            st[params.entity.name] = this;
+
+
+        var parent = this.entity.parent;
+        while (parent) {
+            parent.script?.scripts.forEach(s => { if (!s[params.entity.name]) s[params.entity.name] = this; })
+            parent = parent.parent;
+        }
+
+        Types[this.__scriptType.__name]?.push(this);        
     }
-    Awake(){
+    Awake() {
 
     }
-    DoSwap (old) {
-        console.log("Swapped "+this.__scriptType.name)
+    DoSwap(old) {
+        console.log("Swapped " + this.__scriptType.name)
         for (let prop in old) {
-                this[prop] = old[prop];
+            this[prop] = old[prop];
         }
-    }; 
-    InitArguments(){
-        
+    };
+    InitArguments() {
+
     }
+
     
-    static Register()
-    {
-        
-        this.prototype.InitArguments();
-        pc.registerScript(this, this.name);
-        const fields = Object.getOwnPropertyNames(instance).filter(prop => typeof instance[prop] !== 'function');
-        //console.log(this);
-    }
 };
 
 pc.registerScript(bs, 'bs');

@@ -1,6 +1,5 @@
 
 
-
 class Utils {
     static clampMagnitude(vec3, maxMagnitude) {
         var currentMagnitude = vec3.length();
@@ -15,6 +14,15 @@ class Utils {
     }
 }
 
+pc.ScriptComponent.prototype = pc.ScriptComponent.prototype
+/** @type {Player} */
+pc.ScriptComponent.prototype.player 
+/** @type {Controller} */
+pc.ScriptComponent.prototype.controller 
+/** @type {Life} */
+pc.ScriptComponent.prototype.Life
+/** @type {Sword} */
+pc.ScriptComponent.prototype.Sword
 
 pc.CollisionComponent.prototype = pc.CollisionComponent.prototype
 Object.defineProperty(pc.CollisionComponent.prototype, 'onTriggerEnter', {

@@ -3,16 +3,23 @@ if (globalThis.importScripts) bs = pc.ScriptType;
 
 
 var Player = class extends bs {
+    /** @type {Controller} */
+    ControllerR=null
+    /** @type {Controller} */
+    ControllerL= null
+
     Awake() {
         this.app.xr.input.on('add', (/** @type {pc.XrInputSource} */ inputSource) => {
-            var entity = (inputSource.handedness == '' ? inputSource.id == 2 : inputSource.handedness == pc.XRHAND_LEFT) ? this.controllerTemplate1 : this.controllerTemplate2;
-            entity.script.controller.setInputSource(inputSource);
+            /** @type {Controller} */
+            var controller = ((inputSource.handedness == '' ? inputSource.id == 2 : inputSource.handedness == pc.XRHAND_LEFT) ? this.ControllerL : this.ControllerR);
+            controller.setInputSource(inputSource);
             //entity.reparent(this.cameraParent); 
-            entity.enabled = true;
+            controller.enabled = true;
         });
+        this.controllers = [this.ControllerL, this.ControllerR];
     }
     initialize() {        
-        pc.app.systems.rigidbody.fixedTimeStep = 1 / 120;
+        pc.app.systems.rigidbody.fixedTimeStep = 1 / 220;
     }
     
     InitArguments() {

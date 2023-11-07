@@ -6,31 +6,40 @@ var Sword = class extends bs {
         this.controllerTemplate = pc.Entity.prototype;
         this.dir = pc.Entity.prototype;
         this.debugPanel = pc.Entity.prototype;
+
     }
     swap(old) {
         this.DoSwap(old);
+        this.initialize();
     };
     initialize() {
-
+        /** @type {Life} */
         this.spark = this.entity.findByName("spark")?.particlesystem;
         this.slash = this.entity.findByName("slash")?.sound;
-        //this.controllerTemplate.rigidbody.on('collisionstart', (/** @type {pc.ContactResult} */ result) => {});
-        //this.controllerTemplate.rigidbody.on('collisionend', (/** @type {pc.ContactResult} */ result) => {});
-        
-        if(false && this.entity.getComponentInParent(Player.scriptName))
-        this.controllerTemplate.rigidbody.on('collisionstart', (/** @type {pc.ContactResult} */ result) => {
-            //console.log(result);
-            this.spark.entity.setPosition(result.contacts[0].point);
-            
-            this.spark.reset(); 
-            this.spark.play();
-            //this.slash.volume=.4;
-            //if (!this.slash.isPlaying())this.slash.play(Utils.randomKey(this.slash.slots));
-        });
-         
+
+
+
+
+        if (this.entity.getComponentInParent(Player.scriptName)) {
+            this.controllerTemplate.rigidbody.off('contact');
+            this.controllerTemplate.rigidbody.on('contact', (/** @type {pc.ContactResult} */ result) => {
+                //console.log(result);
+                /*
+                this.spark.entity.setPosition(result.contacts[0].point);
+                this.spark.reset();
+                this.spark.play();
+                */
+                let vel = this.controllerTemplate.rigidbody.linearVelocity.length() + this.controllerTemplate.rigidbody.angularVelocity.length()+result.other.rigidbody.linearVelocity.length() + result.other.rigidbody.angularVelocity.length();
+                let impulse = pc.math.clamp(result.contacts[0].impulse/10*vel, 0, 1);
+                this.entity.script.controller.inputSource.gamepad?.vibrationActuator?.playEffect("dual-rumble", { duration:  impulse, strongMagnitude: impulse, weakMagnitude:0});
+
+                //if (!this.slash.isPlaying())this.slash.play(Utils.randomKey(this.slash.slots));
+            });
+        }
+
 
     }
-
+ 
     update() {
         if (!pc.app.xr.session) return;
 
@@ -44,12 +53,12 @@ var Sword = class extends bs {
         let currentRotation = this.dir.getRotation();
         var relativeRotation = currentRotation.clone().mul(previousRotation.invert());
         var angularVelocity = relativeRotation.getEulerAngles().scale(0.35);
-        Utils.clampMagnitude(angularVelocity, 10); 
+        angularVelocity = Utils.clampMagnitude(angularVelocity, 30);
         this.controllerTemplate.rigidbody.angularVelocity = angularVelocity;
 
-         
-        
-        let mass = (1 / (1+ velocity.length()+angularVelocity.length()));
+
+
+        let mass = (1 / (1 + velocity.length() + angularVelocity.length()));
         //mass = mass < .5 ? 5 : mass < .3 ? 3 : 100;
         //let fv = -this.controllerTemplate.up.dot(this.entity.parent.forward);
         //mass = pc.math.lerp(mass,1.1 - mass, fv)*1;
@@ -64,10 +73,10 @@ var Sword = class extends bs {
             this.controllerTemplate.rigidbody.body.setMassProps(mass, this._ammoVec1);
         }
     }
-    
+
     _ammoVec1 = new pc.Vec3();
 
-}; 
+};
 pc.registerScript(Sword, 'Sword');
 
 Sword.attributes.add('debugPanel', {

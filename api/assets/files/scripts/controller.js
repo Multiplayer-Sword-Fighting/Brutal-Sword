@@ -42,18 +42,23 @@ var Controller = class extends bs {
             pointerElement.material = null;
             pointerMaterial.destroy();
         }, this);
+        this.entity.enabled = false;
     }
     //inputSourceIndex=0;
     //get inputSource(){ return pc.app.xr.input.inputSources[this.inputSourceIndex]; }
     //set inputSource(value){  this.inputSourceIndex = pc.app.xr.input.inputSources.indexOf(value)}
     setInputSource(/** @type {pc.XrInputSource} */inputSource) {
+        this.entity.enabled = true;
         this.inputSource = inputSource;
         inputSource.once('remove', this.onRemove.bind(this));
+        
+        
 
         this.on('hover', this.onHover.bind(this));
         this.on('blur', this.onBlur.bind(this));
 
         if (inputSource.gamepad && inputSource.gamepad.buttons) {
+            inputSource.gamepad.vibrationActuator.playEffect("dual-rumble", { duration: 100, strongMagnitude: 1, weakMagnitude: 1 });
             let previousButtonState = new Array(inputSource.gamepad.buttons.length).fill(false);
             pc.app.on('update', function (dt) {
                 inputSource.gamepad.buttons.forEach(function (button, index) {
@@ -110,9 +115,10 @@ var Controller = class extends bs {
             } else {
                 this.color.set(1, 1, 1);
             }
+            
             this.app.renderLine(this.vecA, this.vecB, this.color);
         }
-
+        
         // hovered entity pointer distance
         if (this.hoverEntity) {
             var dist = this.vecA.copy(this.hoverPoint).sub(this.inputSource.getOrigin()).length();

@@ -1,4 +1,7 @@
-var Mirror = class extends bs {
+
+var Mirror = class extends bs{
+    /** @type {Life} */
+    Player = null;    
     initialize() {
         this.frameData = new Array(100).fill({ position: null, rotation: null,index: null });
         this.frameIndex = 0;
@@ -27,7 +30,7 @@ var Mirror = class extends bs {
         }
     }
     swap (old) {
-        this.DoSwap(old);  
+        this.DoSwap(old);   
     };
 }
 pc.registerScript(Mirror, 'Mirror');

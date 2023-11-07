@@ -43,11 +43,8 @@ var CameraController = class extends bs {
     }
 
     onRotate(yaw, dt) {
-        if(Math.abs(yaw)< this.rotateThreshold) yaw=0;
-        var now = Date.now();
-
-        if ((now - this.lastRotate) < 200)
-            return;
+        //if(Math.abs(yaw)< this.rotateThreshold) yaw=0;
+        //if ((now - this.lastRotate) < 200)return;
 
         if (this.lastRotateValue !== 0) {
             if (this.lastRotateValue > 0) {

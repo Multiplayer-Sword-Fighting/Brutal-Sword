@@ -1,22 +1,31 @@
 
 var st = {
+    /** @type {Vr} */
+    Vr: null,
     /** @type {Player} */
-    Player:null,
+    Player: null,
     /** @type {Mirror} */
-    Mirror:null,
+    Mirror: null,
     /** @type {CameraController} */
-    CameraController:null,
+    CameraController: null,
     /** @type {Multiplayer} */
-    Multiplayer:null,
-    
+    Multiplayer: null,
+
 }
 var Types = {
     /** @type {Life[]} */
-    Life : []
+    Life: []
 }
 
 
 class bs extends pc.ScriptType {
+    /** @type {string} */
+    get text() {
+        return this.entity.element.text;
+    }
+    set text(value) {
+        this.entity.element.text = value;
+    }
     constructor(params) {
 
         super(params);
@@ -25,11 +34,18 @@ class bs extends pc.ScriptType {
 
         var parent = this.entity.parent;
         while (parent) {
-            parent.script?.scripts.forEach(s => { if (!s[params.entity.name]) s[params.entity.name] = this; })
+            parent.script?.scripts.forEach(s => {
+                if (s[params.entity.name]===null) s[params.entity.name] = this;
+                if (s.rigidbody === null && this.entity.rigidbody) s.rigidbody = this.entity.rigidbody;
+            })
+            if(parent.rigidbody===null) parent.rigidbody = this.entity.rigidbody;
             parent = parent.parent;
         }
 
-        Types[this.__scriptType.__name]?.push(this);        
+        
+
+
+        Types[this.__scriptType.__name]?.push(this);
     }
     Awake() {
 
@@ -44,7 +60,7 @@ class bs extends pc.ScriptType {
 
     }
 
-    
+
 };
 
 pc.registerScript(bs, 'bs');

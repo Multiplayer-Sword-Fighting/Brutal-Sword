@@ -9,8 +9,14 @@ var CameraController = class extends bs {
 
         this.lastRotate = 0;
         this.lastRotateValue = 0;
+        
     }
-
+ 
+    postUpdate() {
+        var position = this.entity.getPosition();
+        st.Vr.level.entity.setPosition(position.x, st.Vr.level.entity.getPosition().y, position.z);
+    }
+    
     onTeleport(position) {
         if (this.app.xr.type === pc.XRTYPE_AR)
             return;

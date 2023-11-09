@@ -1,30 +1,49 @@
 
 if (globalThis.importScripts) bs = pc.ScriptType;
 
-pc.Entity.prototype = pc.Entity.prototype;
-pc.Entity.prototype.getData = function () {
-    const position = this.getPosition();
-    const rotation = this.getEulerAngles();
-    return [position.x, position.y, position.z, rotation.x, rotation.y, rotation.z];
-}
+
 class WorldState {
     data = []
 }
 let worldState = new WorldState();
-pc.Entity.prototype.setData = function (data) {
-    this.setPosition(data[0], data[1], data[2]);
-    this.setEulerAngles(data[3], data[4], data[5]);
-}
+
 /** @type {Photon.LoadBalancing.LoadBalancingClient} */
 var photonNetwork;
+
+
+
+document.addEventListener('visibilitychange', VisChange);
+
+function VisChange(a) {
+    console.log("change")
+    if(a.target.visibilityState!="visible")
+    {
+        photonNetwork.onStateChange = null;
+        photonNetwork.disconnect();        
+    }
+}
+
+
 var gameStartTime = 0;
-class Multiplayer extends pc.ScriptType {
+var username="";
+class Multiplayer extends bs {
     /** @type {bs}*/
     UI=null;
+    /** @type {bs}*/
+    PlayerNameField=null
+    /** @type {bs}*/
+    OponentNameField=null
+
     initialize() {
-        st.Multiplayer=this;
+        
+        (username = localStorage.getItem("username")) || localStorage.setItem("username", username = prompt("Enter your name", "Player"+Math.floor(Math.random()*99)));
+        
+        this.PlayerNameField.text = username;
+        
+    }
+    Start(){
         // Photon Settings
-        photonNetwork = new Photon.LoadBalancing.LoadBalancingClient(this.wss ? 1 : 0, this.appId, this.appVersion);
+        photonNetwork = new Photon.LoadBalancing.LoadBalancingClient(this.wss ? 1 : 0, this.appId, this.appVersion);        
         
 
         // pc.Application
@@ -33,17 +52,23 @@ class Multiplayer extends pc.ScriptType {
         if (!photonNetwork.isInLobby()) {
             photonNetwork.connectToRegionMaster(this.region);
         }
+        
         photonNetwork.onRoomList = () => {
-            photonNetwork.joinRandomOrCreateRoom({ maxPlayers: 2 });
+            
         };
         
         photonNetwork.onJoinRoom = () => {
             console.log("Joined the room.");
         };
         photonNetwork.onStateChange = (state) => {
+            photonNetwork.myActor().setName(username);
+            if(state === Photon.LoadBalancing.LoadBalancingClient.State.JoinedLobby)
+                photonNetwork.joinRandomOrCreateRoom({ maxPlayers: 2 });
+            
             if (state === Photon.LoadBalancing.LoadBalancingClient.State.Disconnected|| state===-1) {
                 console.log("Disconnected from the server. Reconnecting...");
-                photonNetwork.disconnect();
+                if(state !== Photon.LoadBalancing.LoadBalancingClient.State.Disconnected)
+                    photonNetwork.disconnect();
                 setTimeout(() => {
                     photonNetwork.connectToRegionMaster(this.region);
                 }, 1000);
@@ -57,17 +82,16 @@ class Multiplayer extends pc.ScriptType {
         
         photonNetwork.onActorJoin = (a)=>{
             console.log("Actor joined", a);
-            this.RestartGame();
+            this.RestartGame();            
+            this.OponentNameField.text = photonNetwork.actorsArray.find(a=>!a.isLocal)?.name||"Shadow"
             //if(a.isLocal && photonNetwork.actorsArray.length>1) return;
             
             st.Mirror.enabled = photonNetwork.actorsArray.length<=1;
             let isMaster = globalThis.isMaster = photonNetwork.myActor().actorNr === photonNetwork.myRoom().masterClientId;
-            if(isMaster)
-            {
-                st.CameraController.entity.setPosition(new pc.Vec3(0, 1.6, isMaster ? 0: -5));
+            
+                //st.CameraController.entity.setPosition(new pc.Vec3(0, 1.6, isMaster ? 0: -5));
                 st.CameraController.entity.setEulerAngles(new pc.Vec3(0, isMaster ? 0:180));
                 this.UI.entity.setEulerAngles(new pc.Vec3(0, isMaster ? 0 : 180, 0));
-            }                
 
         };
         photonNetwork.onError = (a)=>{
@@ -76,6 +100,7 @@ class Multiplayer extends pc.ScriptType {
         
 
         photonNetwork.onActorLeave = (a)=>{
+            this.OponentNameField.text = "Shadow"
             st.Mirror.enabled = true;
         };
         
@@ -100,19 +125,14 @@ class Multiplayer extends pc.ScriptType {
         gameStartTime = Date.now();
         Types.Life.forEach(e => { e.life=100; e.killCount = 0; });                        
     }
-    update() { //write
-        if (photonNetwork.isJoinedToRoom) {
+
+    updateNetwork() {
+        if (photonNetwork?.isJoinedToRoom) {
             let life = st.Player.entity.script.Life
 
             worldState.data = life.sync.map(e => e.getData());
-            //worldState.player = st.Player.entity.getData();
-            //worldState.ControllerL = st.Player.ControllerL.entity.getData();
-            //worldState.ControllerR = st.Player.ControllerR.entity.getData();
-            //worldState.Head = st.Head.entity.getData();
 
             photonNetwork.raiseEvent(1, worldState, { receivers: Photon.LoadBalancing.Constants.ReceiverGroup.Others });
-
-
         }
     }
     

@@ -34,9 +34,6 @@ var Life = class extends bs {
         this.score = pc.Entity.prototype;
           /** @type {Entity[]} */
         this.sync = [];
-        /** @type {Entity[]} */
-        this.syncMp = [];
-
     }
 
     initialize() {
@@ -52,13 +49,14 @@ var Life = class extends bs {
     }
     update() 
     {
-        //st.CameraController.entity.translate(this.tran);
+        st.CameraController.entity.translate(this.tran);
+        //st.Vr.level.entity.translate(this.tran.scale(-1));
         this.tran.scale(0.9);
     }
     tran = new pc.Vec3();
     onTriggerEnter(/** @type {pc.Entity} */ sword) {
         if (!pc.app.xr.session) return;
-        if(gameStartTime-Date.now()<1000)
+        if(Date.now()-gameStartTime<1000)
             return;
         let enemy = sword.getComponentInParent(Life.scriptName)
         let me = this.entity.script.Life;
@@ -70,17 +68,17 @@ var Life = class extends bs {
 
         let damage = sword.rigidbody.linearVelocity.length() + sword.rigidbody.angularVelocity.length();
         this.life -= damage; // Subtract life
-        this.tran = enemy.entity.forward.clone()
 
-        this.tran.y = 0;
-
-        this.tran.scale(damage / 300*this.entity.script.player?-1:1);
+        
         if (this.entity.script.player) {
-            //this.tran.scale(damage/300);
             this.entity.script.player.controllers.forEach(function (controller) { controller.inputSource.gamepad?.vibrationActuator?.playEffect("dual-rumble", { duration: 50, strongMagnitude: 1, weakMagnitude: 1 }); });
+            
         }
         else {
             sword.getComponentInParent(Controller.scriptName)?.inputSource?.gamepad?.vibrationActuator?.playEffect("dual-rumble", { duration: 50, strongMagnitude: 1, weakMagnitude: 1 });
+            this.tran = enemy.entity.forward.clone()
+            this.tran.y = 0;
+            this.tran.scale(0.003*damage*(this.entity.script.player?1:-1));
         }
 
         if (this.life <= 0) {
@@ -110,10 +108,6 @@ Life.attributes.add('lifebar', { type: 'entity' });
 Life.attributes.add('score', { type: 'entity' });
 
 Life.attributes.add('sync', {
-    type: 'entity',
-    array: true,
-});
-Life.attributes.add('syncMp', {
     type: 'entity',
     array: true,
 });

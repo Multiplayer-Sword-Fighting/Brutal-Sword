@@ -51,3 +51,14 @@ pc.Entity.prototype.getComponentInParent = function (componentName) {
     }
     return null;
 };
+
+
+pc.Entity.prototype.getData = function () {
+    const position = this.getPosition();
+    const rotation = this.getEulerAngles();
+    return [position.x, position.y, position.z, rotation.x, rotation.y, rotation.z]; 
+}
+pc.Entity.prototype.setData = function (data) {
+    this.setPosition(data[0], data[1], data[2]);
+    this.setEulerAngles(data[3], data[4], data[5]);
+}

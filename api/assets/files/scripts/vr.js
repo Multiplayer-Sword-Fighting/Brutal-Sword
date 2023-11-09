@@ -1,7 +1,10 @@
+if (globalThis.importScripts) bs = pc.ScriptType;
 
-class Vr extends pc.ScriptType {
+class Vr extends bs {
     /** @type {bs} */
     buttonAr = null;
+    /** @type {bs} */
+    level = null;
     InitArgs(){
         this.buttonVr = pc.Entity.prototype;
     }
@@ -52,16 +55,20 @@ class Vr extends pc.ScriptType {
         if (window.DeviceOrientationEvent && window.DeviceOrientationEvent.requestPermission) {
             DeviceOrientationEvent.requestPermission().then(response => {
                 if (response == 'granted') {
-                    window.addEventListener('deviceorientation', () => this.cameraEntity.camera.startXr(type, pc.XRSPACE_LOCAL));
+                    window.addEventListener('deviceorientation', () => this.cameraEntity.camera.startXr(type, pc.XRSPACE_LOCALFLOOR));
                 }
             }).catch(console.error);
         } else {
-            this.cameraEntity.camera.startXr(type, pc.XRSPACE_LOCAL);
+            this.cameraEntity.camera.startXr(type, pc.XRSPACE_LOCALFLOOR);
         }
     }
 
     onAvailable() { this.checkButton(false); }
-    onStart() { this.checkButton(true); }
+    onStart() { this.checkButton(true);
+        st.Multiplayer.Start();
+        pc.app.xr.session.addEventListener('visibilitychange', VisChange);
+    
+    }
     onEnd() { this.checkButton(false); }
 }
 

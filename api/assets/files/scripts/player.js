@@ -23,8 +23,7 @@ var Player = class extends bs {
     }
     
     InitArguments() {
-        this.controllerTemplate1 = pc.Entity.prototype;
-        this.controllerTemplate2 = pc.Entity.prototype;
+        
         this.head = pc.Entity.prototype;
     }
     update() {
@@ -32,8 +31,8 @@ var Player = class extends bs {
 
 
         // Get the positions of the controllers
-        var leftPos = this.controllerTemplate1.getPosition();
-        var rightPos = this.controllerTemplate2.getPosition();
+        var leftPos = this.ControllerL.entity.getPosition();
+        var rightPos = this.ControllerR.entity.getPosition();
 
         // Calculate rotation based on the two positions
         var direction = new pc.Vec3();
@@ -61,6 +60,5 @@ var Player = class extends bs {
 }
 pc.registerScript(Player, 'player');
 
-Player.attributes.add('controllerTemplate1', { type: 'entity' });
-Player.attributes.add('controllerTemplate2', { type: 'entity', });
+
 Player.attributes.add('head', { type: 'entity' });

@@ -64,10 +64,11 @@ var Controller = class extends bs {
                 inputSource.gamepad.buttons.forEach(function (button, index) {
                     if (button.pressed && !previousButtonState[index]) {
                         // pc.app.fire('gamepad:button:' + index + ':pressed', { button: index });
-                        toggleWorld(true)
+                        
+                        //toggleWorld(true)
                     } else if (!button.pressed && previousButtonState[index]) {
                         // pc.app.fire('gamepad:button:' + index + ':released', { button: index });
-                        toggleWorld(false)
+                        //toggleWorld(false)
                     }
                     previousButtonState[index] = button.pressed;
                 }, this);

@@ -1425,8 +1425,8 @@ declare module Photon.LoadBalancing {
         private clearRooms;
         private purgeRemovedRooms;
         private _myActor;
-        private actors;
-        private actorsArray;
+        private actors : { [id: number]: Actor; };
+        private actorsArray: Actor[];
         private lowestActorId;
         private addActor;
         private removeActor;

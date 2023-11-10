@@ -32,11 +32,17 @@ var Life = class extends bs {
         this.collider = pc.Entity.prototype;
         this.lifebar = pc.Entity.prototype;
         this.score = pc.Entity.prototype;
-          /** @type {Entity[]} */
+          /** @type {pc.Entity[]} */
         this.sync = [];
+        this.syncLerp = [];
     }
 
     initialize() {
+        this.entity.setPosition(0, 0, 0);
+        //this.Head.entity.reparent(this.entity.parent);
+        //this.ControllerL.entity.reparent(this.entity.parent);
+        //this.ControllerR.entity.reparent(this.entity.parent);
+        
         this.blood = this.entity.findByName("blood")?.particlesystem;
         this.collider.collision.off('triggerenter');
         this.collider.collision.on('triggerenter', this.onTriggerEnter.bind(this));

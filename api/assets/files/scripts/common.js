@@ -54,11 +54,23 @@ pc.Entity.prototype.getComponentInParent = function (componentName) {
 
 
 pc.Entity.prototype.getData = function () {
-    const position = this.getPosition();
-    const rotation = this.getEulerAngles();
-    return [position.x, position.y, position.z, rotation.x, rotation.y, rotation.z]; 
+    const position = this.getLocalPosition();
+    const rotation = this.getLocalRotation();
+    return [position.x, position.y, position.z, rotation.x, rotation.y, rotation.z, rotation.w];
 }
 pc.Entity.prototype.setData = function (data) {
-    this.setPosition(data[0], data[1], data[2]);
-    this.setEulerAngles(data[3], data[4], data[5]);
+    this.setLocalPosition(data[0], data[1], data[2]);
+    this.setLocalRotation(data[3], data[4], data[5], data[6]);
+}
+
+
+pc.Entity.prototype.setDataLerp = function (data, amount) {
+    var currentPosition = this.getLocalPosition();
+    var currentRotation = this.getLocalRotation();
+
+    var newPosition = currentPosition.lerp (currentPosition, new pc.Vec3(data[0], data[1], data[2]), amount);
+    var newRotation = currentRotation.slerp(currentRotation, new pc.Quat(data[3], data[4], data[5],data[6]), amount);
+    
+    this.setLocalPosition(newPosition);
+    this.setLocalRotation(newRotation);
 }

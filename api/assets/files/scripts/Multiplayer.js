@@ -16,35 +16,37 @@ document.addEventListener('visibilitychange', VisChange);
 
 function VisChange(a) {
     console.log("change")
-    if(a.target.visibilityState!="visible")
-    {
+    if (a.target.visibilityState != "visible") {
         photonNetwork.onStateChange = null;
-        photonNetwork.disconnect();        
+        photonNetwork.disconnect();
     }
 }
 
 
 var gameStartTime = 0;
-var username="";
+var username = "";
 class Multiplayer extends bs {
     /** @type {bs}*/
-    UI=null;
+    UI = null;
     /** @type {bs}*/
-    PlayerNameField=null
+    PlayerNameField = null
     /** @type {bs}*/
-    OponentNameField=null
+    OponentNameField = null
+    targetPositions = [];
 
     initialize() {
-        
-        (username = localStorage.getItem("username")) || localStorage.setItem("username", username = prompt("Enter your name", "Player"+Math.floor(Math.random()*99)));
-        
+
+        (username = localStorage.getItem("username")) || localStorage.setItem("username", username = prompt("Enter your name", "Player" + Math.floor(Math.random() * 99)));
+
         this.PlayerNameField.text = username;
-        
+
+        setInterval(this.SendData.bind(this), 100);
+
     }
-    Start(){
+    Start() {
         // Photon Settings
-        photonNetwork = new Photon.LoadBalancing.LoadBalancingClient(this.wss ? 1 : 0, this.appId, this.appVersion);        
-        
+        photonNetwork = new Photon.LoadBalancing.LoadBalancingClient(this.wss ? 1 : 0, this.appId, this.appVersion);
+
 
         // pc.Application
         photonNetwork.app = this.app;
@@ -52,22 +54,22 @@ class Multiplayer extends bs {
         if (!photonNetwork.isInLobby()) {
             photonNetwork.connectToRegionMaster(this.region);
         }
-        
+
         photonNetwork.onRoomList = () => {
-            
+
         };
-        
+
         photonNetwork.onJoinRoom = () => {
             console.log("Joined the room.");
         };
         photonNetwork.onStateChange = (state) => {
             photonNetwork.myActor().setName(username);
-            if(state === Photon.LoadBalancing.LoadBalancingClient.State.JoinedLobby)
+            if (state === Photon.LoadBalancing.LoadBalancingClient.State.JoinedLobby)
                 photonNetwork.joinRandomOrCreateRoom({ maxPlayers: 2 });
-            
-            if (state === Photon.LoadBalancing.LoadBalancingClient.State.Disconnected|| state===-1) {
+
+            if (state === Photon.LoadBalancing.LoadBalancingClient.State.Disconnected || state === -1) {
                 console.log("Disconnected from the server. Reconnecting...");
-                if(state !== Photon.LoadBalancing.LoadBalancingClient.State.Disconnected)
+                if (state !== Photon.LoadBalancing.LoadBalancingClient.State.Disconnected)
                     photonNetwork.disconnect();
                 setTimeout(() => {
                     photonNetwork.connectToRegionMaster(this.region);
@@ -75,35 +77,36 @@ class Multiplayer extends bs {
             } else if (state === Photon.LoadBalancing.LoadBalancingClient.State.ConnectedToMaster) {
                 console.log("Connected to master. Joining lobby...");
                 //photonNetwork.joinLobby();
-                
+
             }
         };
 
-        
-        photonNetwork.onActorJoin = (a)=>{
+
+        photonNetwork.onActorJoin = (a) => {
             console.log("Actor joined", a);
-            this.RestartGame();            
-            this.OponentNameField.text = photonNetwork.actorsArray.find(a=>!a.isLocal)?.name||"Shadow"
+            this.RestartGame();
+            this.OponentNameField.text = photonNetwork.actorsArray.find(a => !a.isLocal)?.name || "Shadow"
             //if(a.isLocal && photonNetwork.actorsArray.length>1) return;
-            
-            st.Mirror.enabled = photonNetwork.actorsArray.length<=1;
+
+            st.Mirror.enabled = photonNetwork.actorsArray.length <= 1;
+
             let isMaster = globalThis.isMaster = photonNetwork.myActor().actorNr === photonNetwork.myRoom().masterClientId;
-            
-                //st.CameraController.entity.setPosition(new pc.Vec3(0, 1.6, isMaster ? 0: -5));
-                st.CameraController.entity.setEulerAngles(new pc.Vec3(0, isMaster ? 0:180));
-                this.UI.entity.setEulerAngles(new pc.Vec3(0, isMaster ? 0 : 180, 0));
+
+            st.CameraController.entity.setPosition(new pc.Vec3(0, 1.6, isMaster ? 0 : -5));
+            st.CameraController.entity.setEulerAngles(new pc.Vec3(0, isMaster ? 0 : 180));
+            this.UI.entity.setEulerAngles(new pc.Vec3(0, isMaster ? 0 : 180, 0));
 
         };
-        photonNetwork.onError = (a)=>{
+        photonNetwork.onError = (a) => {
             console.log("Error", a);
         };
-        
 
-        photonNetwork.onActorLeave = (a)=>{
+
+        photonNetwork.onActorLeave = (a) => {
             this.OponentNameField.text = "Shadow"
             st.Mirror.enabled = true;
         };
-        
+
 
         //read
         photonNetwork.onEvent = (code, /** @type {WorldState} */content, actorNr) => {
@@ -113,6 +116,8 @@ class Multiplayer extends bs {
                     let sync = life.sync;
                     for (let i = 0; i < sync.length; i++) {
                         sync[i].setData(content.data[i]);
+                        this.targetPositions = content.data;
+
                     }
                 }
                 default:
@@ -121,12 +126,18 @@ class Multiplayer extends bs {
 
 
     }
-    RestartGame(){
+    RestartGame() {
         gameStartTime = Date.now();
-        Types.Life.forEach(e => { e.life=100; e.killCount = 0; });                        
+        Types.Life.forEach(e => { e.life = 100; e.killCount = 0; });
     }
-
-    updateNetwork() {
+    update(dt) {
+        if (!photonNetwork?.isJoinedToRoom) return;
+        const life = st.Mirror.entity.script.Life;
+        for (let i = 0; i < this.targetPositions.length; i++) {
+            life.sync[i].setDataLerp(this.targetPositions[i], 10 * dt);
+        }
+    }
+    SendData() {
         if (photonNetwork?.isJoinedToRoom) {
             let life = st.Player.entity.script.Life
 
@@ -135,7 +146,7 @@ class Multiplayer extends bs {
             photonNetwork.raiseEvent(1, worldState, { receivers: Photon.LoadBalancing.Constants.ReceiverGroup.Others });
         }
     }
-    
+
 }
 
 

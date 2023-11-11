@@ -1,7 +1,6 @@
 
 if (globalThis.importScripts) bs = pc.ScriptType;
 
-
 class WorldState {
     data = []
 }
@@ -19,6 +18,7 @@ function VisChange(a) {
     if (a.target.visibilityState != "visible") {
         photonNetwork.onStateChange = null;
         photonNetwork.disconnect();
+        location.reload();
     }
 }
 
@@ -32,7 +32,8 @@ class Multiplayer extends bs {
     PlayerNameField = null
     /** @type {bs}*/
     OponentNameField = null
-    targetPositions = [];
+    /** @type {WorldState}*/
+    received = new WorldState();
 
     initialize() {
 
@@ -40,7 +41,7 @@ class Multiplayer extends bs {
 
         this.PlayerNameField.text = username;
 
-        setInterval(this.SendData.bind(this), 100);
+        setInterval(this.SendData.bind(this), 1/30*1000);
 
     }
     Start() {
@@ -115,10 +116,10 @@ class Multiplayer extends bs {
                     const life = st.Mirror.entity.script.Life;
                     let sync = life.sync;
                     for (let i = 0; i < sync.length; i++) {
-                        sync[i].setData(content.data[i]);
-                        this.targetPositions = content.data;
-
+                        if(!life.syncLerp.includes(life.sync[i]))
+                            sync[i].setData(content.data[i]);
                     }
+                    this.received = content;
                 }
                 default:
             }
@@ -131,10 +132,11 @@ class Multiplayer extends bs {
         Types.Life.forEach(e => { e.life = 100; e.killCount = 0; });
     }
     update(dt) {
-        if (!photonNetwork?.isJoinedToRoom) return;
+        if (!photonNetwork || photonNetwork.actorsArray.length<2) return;
         const life = st.Mirror.entity.script.Life;
-        for (let i = 0; i < this.targetPositions.length; i++) {
-            life.sync[i].setDataLerp(this.targetPositions[i], 10 * dt);
+        for (let i = 0; i < this.received.data.length; i++) {
+            if(life.syncLerp.includes(life.sync[i]))
+                life.sync[i].setDataLerp(this.received.data[i], 10 * dt);
         }
     }
     SendData() {

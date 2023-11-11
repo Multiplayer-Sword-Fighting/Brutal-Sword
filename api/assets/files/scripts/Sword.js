@@ -17,8 +17,8 @@ var Sword = class extends bs {
 
     initialize() {
         /** @type {Life} */
-        this.spark = this.entity.findByName("spark")?.particlesystem;
-        this.slash = this.entity.findByName("slash")?.sound;
+        this.spark = this.entity.findFast("spark")?.particlesystem;
+        this.slash = this.entity.findFast("slash")?.sound;
         this.dir =this.rigidbody.entity.parent;
 
 
@@ -39,31 +39,34 @@ var Sword = class extends bs {
                 //if (!this.slash.isPlaying())this.slash.play(Utils.randomKey(this.slash.slots));
             });
         }
-
+        this.originalMass = this.rigidbody.mass
 
     }
 
+
     update() {
         if (!pc.app.xr.session) return;
+        
 
         this.previousPosition = this.rigidbody.entity.getPosition();
         this.currentPosition = this.dir.getPosition();
-        var velocity = this.currentPosition.clone().sub(this.previousPosition).scale(30);
+        var velocity = this.currentPosition.clone().sub(this.previousPosition).scale(this.shield?10:30);
         this.rigidbody.linearVelocity = velocity //= pc.Vec3.ZERO;
-
 
         let previousRotation = this.rigidbody.entity.getRotation();
         let currentRotation = this.dir.getRotation();
         var relativeRotation = currentRotation.clone().mul(previousRotation.invert());
-        var angularVelocity = relativeRotation.getEulerAngles().scale(0.35);
+        let euler = relativeRotation.getEulerAngles();
+        var angularVelocity = euler.scale(this.shield?0.05:0.35);
         angularVelocity = Utils.clampMagnitude(angularVelocity, 30);
 
         this.rigidbody.angularVelocity = angularVelocity;
 
 
-        if (!this.shield) {
-            let mass = (1 / (1 + velocity.length() + angularVelocity.length()));
-            mass = mass * mass // < .1 ? 3 : 100;
+        //if (!this.shield) 
+        {
+            let mass = (this.originalMass  / (1 + velocity.length() + angularVelocity.length()));
+            mass = this.shield?0.1: (mass * mass) // < .1 ? 3 : 100;
             //let fv = -this.rigidbody.entity.up.dot(this.entity.parent.forward);
             //mass = pc.math.lerp(mass,1.1 - mass, fv)*1;
             //if(fv>.5)
@@ -74,7 +77,8 @@ var Sword = class extends bs {
             if (this.rigidbody._mass != mass) {
                 this.rigidbody._mass = mass;
                 this.rigidbody.body.getCollisionShape().calculateLocalInertia(mass, this._ammoVec1);
-                this.rigidbody.body.setMassProps(mass, this._ammoVec1);
+                
+                this.rigidbody.body.setMassProps(mass,pc.Vec3.LEFT);
             }
         }
     }

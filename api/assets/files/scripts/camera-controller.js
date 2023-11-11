@@ -14,7 +14,7 @@ var CameraController = class extends bs {
  
     postUpdate() {
         var position = this.entity.getPosition();
-        st.Vr.level.entity.setPosition(position.x, st.Vr.level.entity.getPosition().y, position.z);
+        st.Vr.level.entity.setPosition(position.x,st.Vr.level.entity.getPosition().y, position.z);
     }
     
     onTeleport(position) {
@@ -73,7 +73,7 @@ var CameraController = class extends bs {
 
             this.vec3A.copy(this.camera.getLocalPosition());
             this.entity.translateLocal(this.vec3A);
-            this.entity.rotateLocal(0, Math.sign(yaw) * this.rotateSpeed, 0);
+            this.entity.rotateLocal(0, Math.sign(yaw) * -this.rotateSpeed, 0);
             this.entity.translateLocal(this.vec3A.scale(-1));
         }
     }

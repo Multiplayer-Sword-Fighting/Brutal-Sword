@@ -51,7 +51,13 @@ pc.Entity.prototype.getComponentInParent = function (componentName) {
     }
     return null;
 };
-
+/** @return {pc.Entity}  */
+pc.Entity.prototype.findFast = function (name) {
+    for (var i = 0; i < this._children.length; i++) 
+        if (this._children[i].name === name) return this._children[i];
+    
+    return null;
+}
 
 pc.Entity.prototype.getData = function () {
     const position = this.getLocalPosition();

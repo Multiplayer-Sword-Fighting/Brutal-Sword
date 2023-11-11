@@ -20,7 +20,7 @@ var Player = class extends bs {
         });
     }
     initialize() {        
-        this.body = this.entity.findByName("body");
+        this.body = this.entity.findFast("body");
         this.controllers = [this.ControllerL, this.ControllerR];
         pc.app.systems.rigidbody.fixedTimeStep = 1 / 220;
     }

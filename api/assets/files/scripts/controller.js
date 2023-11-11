@@ -10,12 +10,12 @@ var Controller = class extends bs {
         this.quat = new pc.Quat();
         this.color = new pc.Color(1, 1, 1);
 
-        this.modelEntity = this.entity.findByName('model');
+        this.modelEntity = this.entity.findFast('model');
         this.hoverEntity = null;
 
         this.targetPointerSize = 2;
         this.targetTeleportable = false;
-        this.pointer = this.entity.findByName('pointer');
+        this.pointer = this.entity.findFast('pointer');
 
         // Create a clone on the UI material that doesn't depth test
         var pointerElement = this.pointer.element;

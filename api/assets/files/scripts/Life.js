@@ -34,6 +34,7 @@ var Life = class extends bs {
         this.score = pc.Entity.prototype;
           /** @type {pc.Entity[]} */
         this.sync = [];
+        /** @type {pc.Entity[]} */
         this.syncLerp = [];
     }
 
@@ -43,9 +44,11 @@ var Life = class extends bs {
         //this.ControllerL.entity.reparent(this.entity.parent);
         //this.ControllerR.entity.reparent(this.entity.parent);
         
-        this.blood = this.entity.findByName("blood")?.particlesystem;
+        this.blood = this.entity.findFast("blood")?.particlesystem;
         this.collider.collision.off('triggerenter');
         this.collider.collision.on('triggerenter', this.onTriggerEnter.bind(this));
+        /** @type {pc.Entity}*/
+        this.body = this.entity.findFast("body");
         this.resetLife();
         
     }
@@ -64,11 +67,12 @@ var Life = class extends bs {
         if (!pc.app.xr.session) return;
         if(Date.now()-gameStartTime<1000)
             return;
+        /** @type {Life} */
         let enemy = sword.getComponentInParent(Life.scriptName)
         let me = this.entity.script.Life;
         if (enemy == me || !enemy) return;
 
-        this.blood.entity.setPosition(this.entity.getPosition());
+        this.blood.entity.setPosition(this.body.getPosition());
         this.blood.reset();
         this.blood.play();
 
@@ -82,7 +86,7 @@ var Life = class extends bs {
         }
         else {
             sword.getComponentInParent(Controller.scriptName)?.inputSource?.gamepad?.vibrationActuator?.playEffect("dual-rumble", { duration: 50, strongMagnitude: 1, weakMagnitude: 1 });
-            this.tran = enemy.entity.forward.clone()
+            this.tran = enemy.body.forward.clone()
             this.tran.y = 0;
             this.tran.scale(0.003*damage*(this.entity.script.player?1:-1));
         }
@@ -114,6 +118,10 @@ Life.attributes.add('lifebar', { type: 'entity' });
 Life.attributes.add('score', { type: 'entity' });
 
 Life.attributes.add('sync', {
+    type: 'entity',
+    array: true,
+});
+Life.attributes.add('syncLerp', {
     type: 'entity',
     array: true,
 });

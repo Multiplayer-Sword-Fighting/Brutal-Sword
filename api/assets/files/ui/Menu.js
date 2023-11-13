@@ -1,16 +1,6 @@
+
+
 /*
-
-
-
-this.div = document.createElement('div');
-this.div.classList.add('container2');
-this.div.innerHTML = this.html.resource || '';
-document.body.appendChild(this.div);
-
-var style = document.createElement('style');
-document.head.appendChild(style);
-style.innerHTML = this.css.resource || '';
-
 //fetch tailwind css
 fetch('https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css')
     .then(response => response.text())
@@ -19,21 +9,45 @@ fetch('https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css')
         document.head.appendChild(style);
         style.innerHTML = data;
     });
+*/
 
-Menu ={
+
+var Menu = {
     region: 'eu',
-    platform: 'vr',
+    platform: 'VR',
+    playerName: 'Player' + Math.floor(Math.random() * 100),
+    playerLevel: 0,
+    roomCount: "connecting...",
     StartGame: () => {
         console.log("StartGame");
-        st.Multiplayer.Start();
-    }
+        st.Vr.sessionStart(Menu.platform === 'VR' ? pc.XRTYPE_VR : pc.XRTYPE_AR);
+    },
 
 }
-new Vue({
-    el: '#app',
-    data: Menu,    
-});
+function SaveSettings() {
+    localStorage.setItem('Menu', JSON.stringify(Menu));
+}
+Object.assign(Menu, JSON.parse(localStorage.getItem('Menu') || '{}'));
 
+document.addEventListener('visibilitychange', SaveSettings);
+window.onbeforeunload = function () {
+    SaveSettings();
 
+};
+function InitVue() {
 
-*/
+    new Vue({
+        el: '#app',
+        data: Menu,
+        watch: {
+            region: function (newRegion, oldRegion) {
+                photonNetwork.disconnect();
+                photonNetwork.connectToRegionMaster(newRegion);
+            }, playerName: function (newName, oldName) {
+                photonNetwork.myActor().setName(newName);
+            }
+        }
+    });
+}
+document.addEventListener('DOMContentLoaded', InitVue);
+

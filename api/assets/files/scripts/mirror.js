@@ -3,7 +3,7 @@ var Mirror = class extends bs {
 
     initialize() {
         /** @type {{position:pc.Vec3,rotation:pc.Quat,index:number,toEntity:pc.Entity}[]} */
-        this.frameData = new Array(100).fill({ position: null, rotation: null, index: null });
+        this.frameData = new Array(500).fill({ position: null, rotation: null, index: null });
         this.frameIndex = 0;
         /*
         this.entity.script.Life.sync.forEach(e => {
@@ -56,6 +56,7 @@ var Mirror = class extends bs {
     }
     swap(old) {
         this.DoSwap(old);
+        initialize()
     };
 }
 pc.registerScript(Mirror, 'Mirror');

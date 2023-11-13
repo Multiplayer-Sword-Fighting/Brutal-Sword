@@ -3,3 +3,4 @@ api/assets/files/scripts/Photon/Photon-Javascript_SDK.min.js
 api/assets/files/scripts/webvr-polyfill/webxr-polyfill-patch.js
 api/assets/files/scripts/webvr-polyfill/webxr-polyfill.min.js
 playcanvas.d.ts
+ammo.d.ts

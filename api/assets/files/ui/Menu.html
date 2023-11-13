@@ -3,6 +3,7 @@
 // v0 by Vercel.
 // https://v0.dev/t/GmxBWMu05Vv
 -->
+
 <section class="w-full min-h-screen text-white" id="app">
   <div class="backdrop-filter p-6 rounded-lg m-4">
     <header class="flex items-center justify-between">
@@ -19,8 +20,8 @@
       <nav class="flex items-center space-x-4"><a class="text-xl" href="#" rel="ugc">Home</a><a class="text-xl" href="#"
           rel="ugc">Mod List</a><a class="text-xl" href="#" rel="ugc">Shop</a><a class="text-xl" href="#"
           rel="ugc">Leaderboard</a><a class="text-xl" href="#" rel="ugc">Settings</a></nav>
-      <div class="flex items-center space-x-4"><span class="text-xl">Player: {{ player.name }}</span><span class="text-xl">Level:
-          {{ player.level }}</span><a class="text-xl" href="#" rel="ugc">Logout</a></div>
+      <div class="flex items-center space-x-4"><span class="text-xl">Player: {{ playerName }}</span><span class="text-xl">Level:
+          {{ playerLevel }}</span><a class="text-xl" href="#" rel="ugc">Logout</a></div>
     </header>
     <main class="flex flex-col items-center justify-center min-h-[calc(100vh-16rem)] bg-cover bg-center"
       style="background-image:url(/bloody-sword.jpg)">
@@ -29,24 +30,25 @@
         <h2 class="text-6xl font-bold mb-4">Brutal Sword Game</h2>
         <div class="flex flex-col items-center justify-center space-y-4">
           <div class="bg-gray-900 dark:bg-gray-700 rounded-lg p-4"><label for="platform"
-              class="block text-xl mb-2">Select Platform</label><select id="platform" v-model="platform"
-              class="w-full h-10 px-3 text-xl bg-gray-800 dark:bg-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-              <option>VR</option>
-              <option>AR</option>
+              class="block text-xl mb-2">Select Platform</label>
+              <select id="platform" v-model="platform" class="w-full h-10 px-3 text-xl bg-gray-800 dark:bg-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+              <option value="VR">VR</option>
+              <option value="AR">AR</option>
             </select></div>
           <div class="bg-gray-900 dark:bg-gray-700 rounded-lg p-4"><label for="region" class="block text-xl mb-2">Select
               Server Region</label><select id="region" v-model="region"
               class="w-full h-10 px-3 text-xl bg-gray-800 dark:bg-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-              <option>North America</option>
-              <option>Europe</option>
-              <option>Asia</option>
-              <option>Australia</option>
+              <option value="us">North America</option>
+              <option value="sa">South America</option>
+              <option value="eu">Europe</option>
+              <option value="ch">China</option>
+              <option value="au">Australia</option>
             </select></div>
-          <div class="bg-gray-900 dark:bg-gray-700 rounded-lg p-4"><span class="text-xl">Room count: {{ roomCount }}</span></div>
+          <div class="bg-gray-900 dark:bg-gray-700 rounded-lg p-4"><span class="text-xl">{{ roomCount }}</span></div>
           <button @click="StartGame"
             class="inline-flex items-center justify-center rounded-md font-medium ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 text-primary-foreground h-10 text-2xl bg-red-500 hover:bg-red-700 transition-colors px-8 py-2">Play
             Now</button><button
-            class="inline-flex items-center justify-center rounded-md font-medium ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border bg-background h-10 text-2xl border-red-500 text-red-500 hover:bg-red-500 hover:text-white transition-colors px-8 py-2">Spectate</button>
+            class="inline-flex items-center justify-center rounded-md font-medium ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border bg-background h-10 text-2xl border-red-500 text-red-500 hover:bg-red-500 hover:text-white transition-colors px-8 py-2">Mods</button>
         </div>
       </div>
     </main>
@@ -72,5 +74,8 @@
     </footer>
   </div>
 </section> 
-<script src="Menu.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+
+<script src="https://launch.playcanvas.com/api/assets/files/ui/vue.js?id=156945336&branchId=e0a7c654-a31b-4def-8047-2c11b1eface2"></script>
+<script src="Menu.js?id=156944535"></script>
 <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">

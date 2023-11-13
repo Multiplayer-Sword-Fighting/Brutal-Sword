@@ -1,5 +1,6 @@
 if (globalThis.importScripts) bs = pc.ScriptType;
 
+
 class Vr extends bs {
     /** @type {bs} */
     buttonAr = null;
@@ -19,12 +20,27 @@ class Vr extends bs {
         this.app.keyboard.on('keydown', evt => {
             if (evt.key === pc.KEY_ESCAPE && this.app.xr.active) this.app.xr.end();
         });
-        
+
         this.checkButton(false);
         this.setEvents();
 
+        this.InitMenu();
+        InitVue();
     }
-  
+    InitMenu(){
+    
+
+        this.div = document.createElement('div');
+        this.div.classList.add('container2');
+        this.div.innerHTML = this.html.resource || '';
+        document.body.appendChild(this.div);
+    
+        var style = document.createElement('style');
+        document.head.appendChild(style);
+        style.innerHTML = this.css.resource || '';
+    
+        
+    }
 
     setEvents() {
         this.app.xr.on('available:' + pc.XRTYPE_AR, this.onAvailable, this);
@@ -45,7 +61,7 @@ class Vr extends bs {
             }
         } else {
             this.buttonVr.enabled = false;
-            this.elementUnsupported.enabled = window.location.protocol == "https:"; 
+            this.elementUnsupported.enabled = window.location.protocol == "https:";
             this.elementHttpsRequired.enabled = !this.elementUnsupported.enabled;
         }
     }

@@ -50,15 +50,20 @@ var Sword = class extends bs {
 
         this.previousPosition = this.rigidbody.entity.getPosition();
         this.currentPosition = this.dir.getPosition();
-        var velocity = this.currentPosition.clone().sub(this.previousPosition).scale(this.shield?10:30);
-        this.rigidbody.linearVelocity = velocity //= pc.Vec3.ZERO;
+        var displacement = this.currentPosition.clone().sub(this.previousPosition);
+        var distance = displacement.length();
+        let len = .03;
+        var velocity = displacement.normalize().scale(distance < len || !this.shield ? distance * 30 : (distance - len) * 5 + len*30);
+        this.rigidbody.linearVelocity = velocity;
 
         let previousRotation = this.rigidbody.entity.getRotation();
         let currentRotation = this.dir.getRotation();
+        
         var relativeRotation = currentRotation.clone().mul(previousRotation.invert());
+        
         let euler = relativeRotation.getEulerAngles();
-        var angularVelocity = euler.scale(this.shield?0.05:0.35);
-        angularVelocity = Utils.clampMagnitude(angularVelocity, 30);
+        var angularVelocity = euler.scale(0.35);
+        angularVelocity = Utils.clampMagnitude(angularVelocity, this.shield?5:30);
 
         this.rigidbody.angularVelocity = angularVelocity;
 

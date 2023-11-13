@@ -10,15 +10,13 @@ let worldState = new WorldState();
 var photonNetwork;
 
 
-
 document.addEventListener('visibilitychange', VisChange);
 
 function VisChange(a) {
     console.log("change")
     if (a.target.visibilityState != "visible") {
-        photonNetwork.onStateChange = null;
-        photonNetwork.disconnect();
-        location.reload();
+
+        //photonNetwork.disconnect();location.reload();
     }
 }
 
@@ -34,50 +32,39 @@ class Multiplayer extends bs {
     OponentNameField = null
     /** @type {WorldState}*/
     received = new WorldState();
-
     initialize() {
-
         (username = localStorage.getItem("username")) || localStorage.setItem("username", username = prompt("Enter your name", "Player" + Math.floor(Math.random() * 99)));
 
         this.PlayerNameField.text = username;
 
         setInterval(this.SendData.bind(this), 1/30*1000);
-
-    }
-    Start() {
-        // Photon Settings
-        photonNetwork = new Photon.LoadBalancing.LoadBalancingClient(this.wss ? 1 : 0, this.appId, this.appVersion);
-
-
-        // pc.Application
-        photonNetwork.app = this.app;
-        // Connect to the master server
-        if (!photonNetwork.isInLobby()) {
-            photonNetwork.connectToRegionMaster(this.region);
-        }
-
+        photonNetwork = new Photon.LoadBalancing.LoadBalancingClient(1, this.appId, this.appVersion);
+        //photonNetwork.app = this.app;
+        photonNetwork.connectToRegionMaster(Menu.region);
+        
+        
         photonNetwork.onRoomList = () => {
-
+            Menu.roomCount = "Room count: " + photonNetwork.availableRooms().length;
         };
 
         photonNetwork.onJoinRoom = () => {
             console.log("Joined the room.");
         };
         photonNetwork.onStateChange = (state) => {
-            photonNetwork.myActor().setName(username);
-            if (state === Photon.LoadBalancing.LoadBalancingClient.State.JoinedLobby)
-                photonNetwork.joinRandomOrCreateRoom({ maxPlayers: 2 });
-
+            photonNetwork.myActor().setName(Menu.playerName);
+            Menu.roomCount = "Connecting: "+state;
+                            
             if (state === Photon.LoadBalancing.LoadBalancingClient.State.Disconnected || state === -1) {
                 console.log("Disconnected from the server. Reconnecting...");
                 if (state !== Photon.LoadBalancing.LoadBalancingClient.State.Disconnected)
                     photonNetwork.disconnect();
                 setTimeout(() => {
-                    photonNetwork.connectToRegionMaster(this.region);
+                    photonNetwork.connectToRegionMaster(Menu.region);
                 }, 1000);
             } else if (state === Photon.LoadBalancing.LoadBalancingClient.State.ConnectedToMaster) {
                 console.log("Connected to master. Joining lobby...");
-                //photonNetwork.joinLobby();
+                if(pc.app.xr.active)
+                    this.Start();
 
             }
         };
@@ -106,6 +93,8 @@ class Multiplayer extends bs {
         photonNetwork.onActorLeave = (a) => {
             this.OponentNameField.text = "Shadow"
             st.Mirror.enabled = true;
+            if(!a.isLocal)
+                photonNetwork.leaveRoom();                
         };
 
 
@@ -125,7 +114,9 @@ class Multiplayer extends bs {
             }
         };
 
-
+    }
+    Start() {
+        photonNetwork.joinRandomOrCreateRoom({ expectedMaxPlayers: 2 }, null, { maxPlayers: 2 });
     }
     RestartGame() {
         gameStartTime = Date.now();
@@ -140,7 +131,7 @@ class Multiplayer extends bs {
         }
     }
     SendData() {
-        if (photonNetwork?.isJoinedToRoom) {
+        if (photonNetwork?.isJoinedToRoom()) {
             let life = st.Player.entity.script.Life
 
             worldState.data = life.sync.map(e => e.getData());
@@ -157,26 +148,3 @@ pc.registerScript(Multiplayer, 'Multiplayer');
 // photon-loadbalancing-playcanvas.js
 Multiplayer.attributes.add("appId", { type: "string" });
 Multiplayer.attributes.add("appVersion", { type: "string", default: "1.0" });
-Multiplayer.attributes.add("wss", { type: "boolean", default: true });
-Multiplayer.attributes.add("region", {
-    type: "string", default: "eu",
-    description: "Photon Cloud has servers in several regions, distributed across multiple hosting centers over the world.You can choose optimized region for you.",
-    enum: [
-        { "Select Region": "default" },
-        { "Asia, Singapore": "asia" },
-        { "Australia, Melbourne": "au" },
-        { "Canada, East Montreal": "cae" },
-        { "Chinese Mainland (See Instructions)	Shanghai": "cn" },
-        { "Europe, Amsterdam": "eu" },
-        { "India, Chennai": "in" },
-        { "Japan, Tokyo": "jp" },
-        { "Russia Moscow": "ru" },
-        { "Russia, East Khabarovsk": "rue" },
-        { "South Africa Johannesburg": "za" },
-        { "South America, Sao Paulo": "sa" },
-        { "South Korea, Seoul": "kr" },
-        { "Turkey Istanbul": "tr" },
-        { "USA, East Washington": "us" },
-        { "USA, West San José": "usw" },
-    ],
-});

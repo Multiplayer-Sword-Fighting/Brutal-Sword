@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select Example with Vue.js</title>
+    <!-- Add your CSS styles if necessary -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+        .info {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <select id="platform"
+                v-model="platform"
+                class="w-full h-10 px-3 text-xl bg-gray-800 dark:bg-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <option value="VR">VR</option>
+            <option value="AR">AR</option>
+        </select>
+        <div class="info">
+            <p>Selected platform: {{ platform }}</p>
+        </div>
+    </div>
+
+    <!-- Include Vue.js from CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+    <!-- Your Vue instance -->
+    <script>
+        new Vue({
+            el: '#app',
+            data: da={
+                platform: 'VR' // Default selection
+            }
+        });
+    </script>
+</body>
+
+</html>

@@ -1,81 +1,121 @@
 <!--
   
 // v0 by Vercel.
-// https://v0.dev/t/GmxBWMu05Vv
+// https://v0.dev/r/VI9poEklWCo
 -->
+<html>
 
-<section class="w-full min-h-screen text-white" id="app">
-  <div class="backdrop-filter p-6 rounded-lg m-4">
-    <header class="flex items-center justify-between">
-      <div class="flex items-center space-x-4"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-          viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-          stroke-linejoin="round" class=" h-8 w-8 text-white">
-          <polyline points="14.5 17.5 3 6 3 3 6 3 17.5 14.5"></polyline>
-          <line x1="13" x2="19" y1="19" y2="13"></line>
-          <line x1="16" x2="20" y1="16" y2="20"></line>
-          <line x1="19" x2="21" y1="21" y2="19"></line>
-        </svg>
-        <h1 class="text-2xl font-bold">Brutal Sword Game</h1>
-      </div>
-      <nav class="flex items-center space-x-4"><a class="text-xl" href="#" rel="ugc">Home</a><a class="text-xl" href="#"
-          rel="ugc">Mod List</a><a class="text-xl" href="#" rel="ugc">Shop</a><a class="text-xl" href="#"
-          rel="ugc">Leaderboard</a><a class="text-xl" href="#" rel="ugc">Settings</a></nav>
-      <div class="flex items-center space-x-4"><span class="text-xl">Player: {{ playerName }}</span><span class="text-xl">Level:
-          {{ playerLevel }}</span><a class="text-xl" href="#" rel="ugc">Logout</a></div>
-    </header>
-    <main class="flex flex-col items-center justify-center min-h-[calc(100vh-16rem)] bg-cover bg-center"
-      style="background-image:url(/bloody-sword.jpg)">
-      <div
-        class="backdrop-filter backdrop-blur-lg bg-opacity-50 bg-black dark:bg-opacity-50 dark:bg-gray-800 p-6 rounded-lg m-4">
-        <h2 class="text-6xl font-bold mb-4">Brutal Sword Game</h2>
-        <div class="flex flex-col items-center justify-center space-y-4">
-          <div class="bg-gray-900 dark:bg-gray-700 rounded-lg p-4"><label for="platform"
-              class="block text-xl mb-2">Select Platform</label>
-              <select id="platform" v-model="platform" class="w-full h-10 px-3 text-xl bg-gray-800 dark:bg-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-              <option value="VR">VR</option>
-              <option value="AR">AR</option>
-            </select></div>
-          <div class="bg-gray-900 dark:bg-gray-700 rounded-lg p-4"><label for="region" class="block text-xl mb-2">Select
-              Server Region</label><select id="region" v-model="region"
-              class="w-full h-10 px-3 text-xl bg-gray-800 dark:bg-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-              <option value="us">North America</option>
-              <option value="sa">South America</option>
-              <option value="eu">Europe</option>
-              <option value="ch">China</option>
-              <option value="au">Australia</option>
-            </select></div>
-          <div class="bg-gray-900 dark:bg-gray-700 rounded-lg p-4"><span class="text-xl">{{ roomCount }}</span></div>
-          <button @click="StartGame"
-            class="inline-flex items-center justify-center rounded-md font-medium ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 text-primary-foreground h-10 text-2xl bg-red-500 hover:bg-red-700 transition-colors px-8 py-2">Play
-            Now</button><button
-            class="inline-flex items-center justify-center rounded-md font-medium ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border bg-background h-10 text-2xl border-red-500 text-red-500 hover:bg-red-500 hover:text-white transition-colors px-8 py-2">Mods</button>
+<head>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<style>
+  input {
+    
+    /* Set background and border color to dim for input fields also active border color to dim*/
+    background-color: rgba(0, 0, 0, 0.5);
+    border-color: rgba(0, 0, 0, 0.5);
+  
+  }
+ 
+</style>
+
+<body style="background-color: black;">
+  <section class="w-full min-h-screen text-white" id="app">
+    <div class="backdrop-filter p-6 rounded-lg m-4">
+      <header class="flex items-center justify-between">
+        <div class="flex items-center space-x-4"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class=" h-8 w-8 text-white">
+            <polyline points="14.5 17.5 3 6 3 3 6 3 17.5 14.5"></polyline>
+            <line x1="13" x2="19" y1="19" y2="13"></line>
+            <line x1="16" x2="20" y1="16" y2="20"></line>
+            <line x1="19" x2="21" y1="21" y2="19"></line>
+          </svg>
+          <h1 class="text-2xl font-bold">Brutal Sword Game</h1>
         </div>
-      </div>
-    </main>
-    <footer class="flex items-center justify-between">
-      <p class="text-xl">© 2023 Brutal Sword Game</p>
-      <div class="flex space-x-4"><a href="#" rel="ugc"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-            stroke-linejoin="round" class=" h-6 w-6 text-white">
-            <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
-          </svg></a><a href="#" rel="ugc"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-            stroke-linejoin="round" class=" h-6 w-6 text-white">
-            <path
-              d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z">
-            </path>
-          </svg></a><a href="#" rel="ugc"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-            stroke-linejoin="round" class=" h-6 w-6 text-white">
-            <rect width="20" height="20" x="2" y="2" rx="5" ry="5"></rect>
-            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
-            <line x1="17.5" x2="17.51" y1="6.5" y2="6.5"></line>
-          </svg></a></div>
-    </footer>
-  </div>
-</section> 
-<script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+        <nav class="flex items-center space-x-4" data-id="7"><a class="text-xl" data-id="8" href="#" rel="ugc"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class=" h-6 w-6 text-white" data-id="9"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg></a><a class="text-xl" data-id="10" href="#" rel="ugc"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class=" h-6 w-6 text-white" data-id="11"><line x1="8" x2="21" y1="6" y2="6"></line><line x1="8" x2="21" y1="12" y2="12"></line><line x1="8" x2="21" y1="18" y2="18"></line><line x1="3" x2="3.01" y1="6" y2="6"></line><line x1="3" x2="3.01" y1="12" y2="12"></line><line x1="3" x2="3.01" y1="18" y2="18"></line></svg></a><a class="text-xl" data-id="12" href="#" rel="ugc"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class=" h-6 w-6 text-white" data-id="13"><path d="m2 7 4.41-4.41A2 2 0 0 1 7.83 2h8.34a2 2 0 0 1 1.42.59L22 7"></path><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path><path d="M15 22v-4a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v4"></path><path d="M2 7h20"></path><path d="M22 7v3a2 2 0 0 1-2 2v0a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 16 12a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 12 12a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 8 12a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 4 12v0a2 2 0 0 1-2-2V7"></path></svg></a><a class="text-xl" data-id="14" href="#" rel="ugc"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class=" h-6 w-6 text-white" data-id="15"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path><path d="M4 22h16"></path><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"></path><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"></path><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"></path></svg></a><a class="text-xl" data-id="16" href="#" rel="ugc"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class=" h-6 w-6 text-white" data-id="17"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path><circle cx="12" cy="12" r="3"></circle></svg></a></nav>
+        <div class="flex items-center space-x-4"><span class="text-xl">{{ save.playerName }}</span><span class="text-xl">Rank:
+            {{ save.playerLevel }}</span>
+            <a class="text-xl" data-id="21" href="#" rel="ugc"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class=" h-6 w-6 text-white" data-id="22"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" x2="9" y1="12" y2="12"></line></svg></a>
+      </header>
 
-<script src="https://launch.playcanvas.com/api/assets/files/ui/vue.js?id=156945336&branchId=e0a7c654-a31b-4def-8047-2c11b1eface2"></script>
-<script src="Menu.js?id=156944535"></script>
-<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+      <main class="flex flex-col items-center justify-center min-h-[calc(100vh-16rem)] bg-cover bg-center" style="background-image: url('/bloody-sword.jpg');">
+
+        <div class="backdrop-filter backdrop-blur-lg bg-opacity-50 bg-black dark:bg-opacity-50 dark:bg-gray-800 p-6 rounded-lg m-4 border-2 border-white/20" data-id="18">
+           <h2 class="text-6xl font-bold mb-4" data-id="19">Brutal Sword Game</h2>
+            <div class="grid grid-cols-2 md:grid-cols-3 items-start gap-4" data-id="20">
+              <div class="bg-gray-900 dark:bg-gray-700 rounded-lg p-4 flex items-center space-x-4" data-id="21">
+                <img alt="Player Profile Picture" class="rounded-full" height="100" src="https://creazilla-store.fra1.digitaloceanspaces.com/cliparts/3168573/swords-clipart-md.png" style="aspect-ratio:100/100;object-fit:cover" width="100" data-id="22">
+                <div data-id="23">
+                  <label class="block text-xl mb-2" for="player-name" data-id="24">Player Name</label>
+                  <input class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-gray-800 dark:text-white" id="player-name" placeholder="Enter your name" data-id="25" v-model="save.playerName">
+                </div>
+              </div>
+              <div class="bg-gray-900 dark:bg-gray-700 rounded-lg p-4" data-id="26">
+                <label class="block text-xl mb-2" for="platform" data-id="27">Select Platform</label>
+                <select class="w-full h-10 px-3 text-xl bg-gray-800 dark:bg-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" id="platform" data-id="28" v-model="save.platform">
+                  <option data-id="29">VR</option>
+                  <option data-id="30">AR</option>
+                </select>
+              </div>
+              <div class="bg-gray-900 dark:bg-gray-700 rounded-lg p-4" data-id="31">
+                <label class="block text-xl mb-2" for="region" data-id="32">Select Server Region</label>
+                <select class="w-full h-10 px-3 text-xl bg-gray-800 dark:bg-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" data-id="33" id="region" v-model="save.region">
+                  <option value="us" data-id="34">North America</option>
+                  <option value="sa" data-id="35">South America</option> 
+                  <option value="eu" data-id="36">Europe</option>
+                </select>
+              </div>
+              <div class="bg-gray-900 dark:bg-gray-700 rounded-lg p-4 absolute top-0 right-0" data-id="39">
+                <span class="text-xl" data-id="40">{{ roomCount }}</span>
+              </div>
+              <div class="flex items-center justify-center space-x-4" data-id="41">
+                <button class="inline-flex items-center justify-center rounded-md font-medium ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 text-primary-foreground h-10 text-3xl bg-red-500 hover:bg-red-700 transition-colors px-12 py-4" data-id="42" @click="StartGame">Play</button>
+                <button class="inline-flex items-center justify-center rounded-md font-medium ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 text-primary-foreground h-10 text-3xl bg-green-500 hover:bg-green-700 transition-colors px-12 py-4" data-id="43" @click="showModal = true">Mods</button>
+              </div>
+            </div>
+        </div>
+        <div v-if="showModal" class="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50" aria-modal="true" role="dialog" data-id="44" @click.self="showModal = false">
+          <div class="bg-gray-900 dark:bg-gray-800 w-3/4 h-3/4 overflow-auto p-6 rounded-lg relative" data-id="45">
+             <!-- Close button -->
+            <button class="absolute top-0 right-0 p-4" @click="showModal = false" data-id="1">
+              <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" data-id="2">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" data-id="3"></path>
+              </svg>
+            </button>
+
+            <h3 class="text-3xl font-bold mb-4" data-id="46">Mod List</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" data-id="47">
+              <!-- Use v-for to iterate over the mods array -->
+              <div v-for="mod in mods" class="bg-gray-800 dark:bg-gray-600 p-4 rounded-lg flex items-center space-x-4 " data-id="48">
+                <img :alt="mod.name + ' Image'" class="rounded-lg" height="100" :src="mod.img || '/placeholder.svg'" style="aspect-ratio:100/100;object-fit:cover" width="100" data-id="49">
+                <div data-id="50">
+                  <h4 class="text-xl font-bold" data-id="51">{{ mod.name }}</h4>
+                  <p data-id="52">Playcount: {{ mod.playcount }}</p>
+                  <p data-id="53">Username: {{ mod.userName }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+      <footer class="flex items-center justify-between ">
+        <p class="text-xl">© 2023 Brutal Sword Game</p>
+        <div class="flex space-x-4"><a href="#" rel="ugc"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class=" h-6 w-6 text-white">
+              <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+            </svg></a><a href="#" rel="ugc"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class=" h-6 w-6 text-white">
+              <path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z">
+              </path>
+            </svg></a><a href="#" rel="ugc"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class=" h-6 w-6 text-white">
+              <rect width="20" height="20" x="2" y="2" rx="5" ry="5"></rect>
+              <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+              <line x1="17.5" x2="17.51" y1="6.5" y2="6.5"></line>
+            </svg></a></div>
+      </footer>
+    </div>
+  </section>
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+
+  <script src="https://launch.playcanvas.com/api/assets/files/ui/vue.js?id=156945336&branchId=e0a7c654-a31b-4def-8047-2c11b1eface2"></script>
+  <script src="Menu.js?id=156944535"></script>
+</body>
+
+</html>

@@ -1,22 +1,26 @@
 
-
-/*
-//fetch tailwind css
-fetch('https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css')
-    .then(response => response.text())
-    .then(data => {
-        var style = document.createElement('style');
-        document.head.appendChild(style);
-        style.innerHTML = data;
-    });
-*/
+var vue;
 
 
+class Mod {
+    constructor() {
+        this.name = "Mod";
+        this.playcount = 0;
+        this.userName = "Player";
+        this.url = "";
+        this.img = "https://png.pngtree.com/png-vector/20190330/ourmid/pngtree-mod-file-document-icon-png-image_897977.jpg";
+    }
+}
 var Menu = {
-    region: 'eu',
-    platform: 'VR',
-    playerName: 'Player' + Math.floor(Math.random() * 100),
-    playerLevel: 0,
+    save: {
+        region: 'eu',
+        platform: 'VR',
+        playerName: 'Player' + Math.floor(Math.random() * 100),
+        playerLevel: 0,
+    },
+    showModal: false, // Assuming the modal is visible by default
+
+    mods: [new Mod(),new Mod(),new Mod(),new Mod(),new Mod()],
     roomCount: "connecting...",
     StartGame: () => {
         console.log("StartGame");
@@ -25,9 +29,8 @@ var Menu = {
 
 }
 function SaveSettings() {
-    localStorage.setItem('Menu', JSON.stringify(Menu));
+    localStorage.setItem('Menu.save', JSON.stringify(Menu.save));
 }
-Object.assign(Menu, JSON.parse(localStorage.getItem('Menu') || '{}'));
 
 document.addEventListener('visibilitychange', SaveSettings);
 window.onbeforeunload = function () {
@@ -36,18 +39,21 @@ window.onbeforeunload = function () {
 };
 function InitVue() {
 
-    new Vue({
+    vue = new Vue({
         el: '#app',
         data: Menu,
         watch: {
-            region: function (newRegion, oldRegion) {
+            "save.region": function (newRegion, oldRegion) {
                 photonNetwork.disconnect();
                 photonNetwork.connectToRegionMaster(newRegion);
-            }, playerName: function (newName, oldName) {
+            }, "save.playerName": function (newName, oldName) {
                 photonNetwork.myActor().setName(newName);
+                st.Multiplayer.PlayerNameField.text = newName;
             }
         }
     });
+    Object.assign(Menu.save, JSON.parse(localStorage.getItem('Menu') || '{}'));
+
 }
 document.addEventListener('DOMContentLoaded', InitVue);
 

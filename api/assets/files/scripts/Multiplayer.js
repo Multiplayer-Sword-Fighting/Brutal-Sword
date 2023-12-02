@@ -22,7 +22,6 @@ function VisChange(a) {
 
 
 var gameStartTime = 0;
-var username = "";
 class Multiplayer extends bs {
     /** @type {bs}*/
     UI = null;
@@ -32,15 +31,13 @@ class Multiplayer extends bs {
     OponentNameField = null
     /** @type {WorldState}*/
     received = new WorldState();
-    initialize() {
-        (username = localStorage.getItem("username")) || localStorage.setItem("username", username = prompt("Enter your name", "Player" + Math.floor(Math.random() * 99)));
-
-        this.PlayerNameField.text = username;
-
+    initialize() 
+    {
+        
         setInterval(this.SendData.bind(this), 1/30*1000);
         photonNetwork = new Photon.LoadBalancing.LoadBalancingClient(1, this.appId, this.appVersion);
         //photonNetwork.app = this.app;
-        photonNetwork.connectToRegionMaster(Menu.region);
+        photonNetwork.connectToRegionMaster(Menu.save.region);
         
         
         photonNetwork.onRoomList = () => {
@@ -59,7 +56,7 @@ class Multiplayer extends bs {
                 if (state !== Photon.LoadBalancing.LoadBalancingClient.State.Disconnected)
                     photonNetwork.disconnect();
                 setTimeout(() => {
-                    photonNetwork.connectToRegionMaster(Menu.region);
+                    photonNetwork.connectToRegionMaster(Menu.save.region);
                 }, 1000);
             } else if (state === Photon.LoadBalancing.LoadBalancingClient.State.ConnectedToMaster) {
                 console.log("Connected to master. Joining lobby...");

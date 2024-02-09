@@ -4,16 +4,19 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
+     
         {
             "type": "chrome",
             "request": "launch",
-            "name": "Launch Chrome against localhost",
-            "url": "https://launch.playcanvas.com/1884029?debug=true",
-            "webRoot": "${workspaceFolder}"            ,
+            "name": "Launch Chrome without security",
+            "url": "https://launch.playcanvas.com/1946277?debug=true",
+            "webRoot": "${workspaceFolder}",
             "runtimeArgs": [
+                "--disable-web-security",
+                "--disable-site-isolation-trials"
                 //"--disable-gpu-vsync",
                 //"--disable-frame-rate-limit"
-            ],
+            ]
         }
     ]
 }

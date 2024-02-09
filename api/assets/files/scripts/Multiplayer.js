@@ -41,14 +41,16 @@ class Multiplayer extends bs {
         
         
         photonNetwork.onRoomList = () => {
-            Menu.roomCount = "Room count: " + photonNetwork.availableRooms().length;
+            Menu.roomList = photonNetwork.availableRooms();
+            Menu.roomCount = "Room count: " + Menu.roomList.length;
         };
 
         photonNetwork.onJoinRoom = () => {
             console.log("Joined the room.");
         };
         photonNetwork.onStateChange = (state) => {
-            photonNetwork.myActor().setName(Menu.playerName);
+            this.PlayerNameField.text = Menu.save.playerName;
+            photonNetwork.myActor().setName(Menu.save.playerName);
             Menu.roomCount = "Connecting: "+state;
                             
             if (state === Photon.LoadBalancing.LoadBalancingClient.State.Disconnected || state === -1) {
@@ -70,7 +72,7 @@ class Multiplayer extends bs {
         photonNetwork.onActorJoin = (a) => {
             console.log("Actor joined", a);
             this.RestartGame();
-            this.OponentNameField.text = photonNetwork.actorsArray.find(a => !a.isLocal)?.name || "Shadow"
+            this.OponentNameField.text = photonNetwork.actorsArray.find(a => !a.isLocal)?.name ?? "Shadow"
             //if(a.isLocal && photonNetwork.actorsArray.length>1) return;
 
             st.Mirror.enabled = photonNetwork.actorsArray.length <= 1;
@@ -85,7 +87,6 @@ class Multiplayer extends bs {
         photonNetwork.onError = (a) => {
             console.log("Error", a);
         };
-
 
         photonNetwork.onActorLeave = (a) => {
             this.OponentNameField.text = "Shadow"
@@ -112,8 +113,14 @@ class Multiplayer extends bs {
         };
 
     }
+    roomName;    
     Start() {
-        photonNetwork.joinRandomOrCreateRoom({ expectedMaxPlayers: 2 }, null, { maxPlayers: 2 });
+        var host = { maxPlayers: 2, propsListedInLobby: ["mod", "name","url"], customGameProperties: { url: currentMod.url, name: this.PlayerNameField.text, mod: currentMod._id } };
+        console.log("Start", host);
+        if(!this.roomName)
+            photonNetwork.joinRandomOrCreateRoom({ expectedMaxPlayers: 2, expectedCustomRoomProperties: { mod: currentMod._id } }, null, host);
+        else
+            photonNetwork.joinRoom(this.roomName);
     }
     RestartGame() {
         gameStartTime = Date.now();

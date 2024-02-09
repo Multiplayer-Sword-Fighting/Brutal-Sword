@@ -1,8 +1,4 @@
-<!--
-  
-// v0 by Vercel.
-// https://v0.dev/r/VI9poEklWCo
--->
+<!-- https://v0.dev/r/VI9poEklWCo -->
 <html>
 
 <head>
@@ -85,31 +81,46 @@
             <h3 class="text-3xl font-bold mb-4" data-id="46">Mod List</h3>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" data-id="47">
               <!-- Use v-for to iterate over the mods array -->
-              <div v-for="mod in mods" class="bg-gray-800 dark:bg-gray-600 p-4 rounded-lg flex items-center space-x-4 " data-id="48">
-                <img :alt="mod.name + ' Image'" class="rounded-lg" height="100" :src="mod.img || '/placeholder.svg'" style="aspect-ratio:100/100;object-fit:cover" width="100" data-id="49">
+              <div v-for="mod in mods" v-if="!mod.hidden" @click="window.open(mod.url)" class="bg-gray-800 dark:bg-gray-600 p-4 rounded-lg flex items-center space-x-4 cursor-pointer" data-id="48">
+                <img :alt="mod.name + ' Image'" class="rounded-lg" height="100" :src="mod.icon || 'https://png.pngtree.com/png-vector/20190330/ourmid/pngtree-mod-file-document-icon-png-image_897977.jpg'" style="aspect-ratio:100/100;object-fit:cover" width="100" data-id="49">
                 <div data-id="50">
-                  <h4 class="text-xl font-bold" data-id="51">{{ mod.name }}</h4>
-                  <p data-id="52">Playcount: {{ mod.playcount }}</p>
-                  <p data-id="53">Username: {{ mod.userName }}</p>
+                  <h4 class="text-xl font-bold" data-id="51">{{ mod.title }}</h4>
+                  <p data-id="52">Play Count: {{ mod.playCount }}</p>
+                  <p data-id="53">By: {{ mod.self?.username }}</p>
                 </div>
               </div>
             </div>
+          <div class="absolute bottom-0 right-0 m-4">
+            <button class="inline-flex items-center justify-center rounded-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4" @click="createMod" v-if="showModal">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+              Create Mod
+            </button>
+          </div>
           </div>
         </div>
+      <div v-if="roomList.length > 0" class="bg-gray-900 dark:bg-gray-700 rounded-lg p-4 mt-4" data-id="55">
+        <h3 class="text-xl font-bold mb-2 text-white" data-id="56">Available Rooms</h3>
+        <div class="overflow-auto max-h-48" data-id="57">
+          <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400" data-id="58">
+            <thead class="text-xs text-gray-700 uppercase bg-gray-800 dark:bg-gray-700 dark:text-gray-400" data-id="59">
+              <tr data-id="60">
+                <th scope="col" class="px-6 py-3 text-white" data-id="61">Room Name</th>
+                <th scope="col" class="px-6 py-3 text-white" data-id="62">Player Count</th>
+                <th scope="col" class="px-6 py-3 text-white" data-id="63">Mod Type</th>
+              </tr>
+            </thead>
+            <tbody data-id="64">
+              <tr v-for="room in roomList" :key="room.name" @click="JoinRoom(room)" class="bg-gray-800 border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-700 dark:hover:bg-gray-600 cursor-pointer" data-id="65">
+                <td class="px-6 py-4 text-white" data-id="66">{{ room._customProperties?.name || room.name }}</td>
+                <td class="px-6 py-4 text-white" data-id="67">{{ room.playerCount }}</td>
+                <td class="px-6 py-4 text-white" data-id="68">{{ room._customProperties?.mod }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
       </main>
-      <footer class="flex items-center justify-between ">
-        <p class="text-xl">© 2023 Brutal Sword Game</p>
-        <div class="flex space-x-4"><a href="#" rel="ugc"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class=" h-6 w-6 text-white">
-              <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
-            </svg></a><a href="#" rel="ugc"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class=" h-6 w-6 text-white">
-              <path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z">
-              </path>
-            </svg></a><a href="#" rel="ugc"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class=" h-6 w-6 text-white">
-              <rect width="20" height="20" x="2" y="2" rx="5" ry="5"></rect>
-              <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
-              <line x1="17.5" x2="17.51" y1="6.5" y2="6.5"></line>
-            </svg></a></div>
-      </footer>
+      
     </div>
   </section>
   <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>

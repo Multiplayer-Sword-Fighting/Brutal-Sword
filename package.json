@@ -1,6 +1,7 @@
 {
     "scripts": {
-        "build": "pcsync pullAll && pcwatch"
+        "build": "pcsync pullAll && pcwatch --force",
+        "ui":"vite api/assets/files/ui"
     },
     "dependencies": {
         

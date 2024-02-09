@@ -26,10 +26,8 @@ class bs extends pc.ScriptType {
     set text(value) {
         this.entity.element.text = value;
     }
-    constructor(params) {
-
+    constructor(params) {        
         super(params);
-        this.Awake();
         st[this.__scriptType.name] = this;
 
         var parent = this.entity.parent;
@@ -41,11 +39,8 @@ class bs extends pc.ScriptType {
             if(parent.rigidbody===null) parent.rigidbody = this.entity.rigidbody;
             parent = parent.parent;
         }
-
-        
-
-
         Types[this.__scriptType.__name]?.push(this);
+        this.Awake();
     }
     Awake() {
 

@@ -4,3 +4,4 @@ api/assets/files/scripts/webvr-polyfill/webxr-polyfill-patch.js
 api/assets/files/scripts/webvr-polyfill/webxr-polyfill.min.js
 playcanvas.d.ts
 ammo.d.ts
+pcconfig.json

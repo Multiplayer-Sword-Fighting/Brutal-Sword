@@ -18,3 +18,9 @@ Welcome to our open-source VR multiplayer sword fighting game! With our game, yo
 
 * **Contribute:** Help improve the game by contributing to the open-source project on [GitHub](https://github.com/Multiplayer-Sword-Fighting/Brutal-Sword).
 * **Feedback:** Provide feedback and suggestions to help us enhance the gameplay and features.
+
+https://github.com/Multiplayer-Sword-Fighting/Brutal-Sword/assets/16543239/079c9b43-d127-4eb3-9275-4f084027160f
+
+
+https://github.com/Multiplayer-Sword-Fighting/Brutal-Sword/assets/16543239/e6a8cf06-94a9-490f-85a9-f728fd3fc426
+

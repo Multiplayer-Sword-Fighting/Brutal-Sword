@@ -4,7 +4,7 @@ Welcome to our open-source VR multiplayer sword fighting game! With our game, yo
 
 # How to Play:
 
-1. **Open it in Oculus browser:** [Play Now!](https://playcanv.as/p/BU0ITtGx/)
+1. **Open it in Oculus browser:** [Play Now!](https://brutalsword.com/)
 
 # Features:
 
